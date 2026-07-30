@@ -1,0 +1,108 @@
+```gitignore
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pythonenv*
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+*.whl
+*.tar.gz
+
+# Virtual environments
+.venv/
+venv/
+virtualenv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.log
+
+# Streamlit
+.streamlit/secrets.toml
+.streamlit/cache/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre
+.pyre/
+
+# PyCharm
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+*.cover
+.hypothesis/
+
+# UV
+uv.lock
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Secret keys and API keys
+.env
+*.key
+*.pem
+*.crt
+*.csr
+
+# Large files
+*.pkl
+*.h5
+*.pb
+*.onnx
+*.ckpt
+*.pt
+*.pth
+
+# Data files (except sample)
+data/*.json
+!data/sample_bible.json

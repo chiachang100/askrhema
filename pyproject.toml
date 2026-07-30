@@ -1,0 +1,177 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tuixiu-bible-search"
+version = "0.1.0"
+description = "TBS (Tuixiu Bible Search) - A hybrid, local-first Bible search and exegesis tool"
+readme = "README.md"
+requires-python = ">=3.14"
+authors = [
+    {name = "TBS Team", email = "tbs@example.com"}
+]
+license = {text = "MIT OR Apache-2.0"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Religion",
+    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.14",
+    "Operating System :: OS Independent",
+    "Topic :: Religion",
+    "Topic :: Text Processing :: Indexing",
+]
+
+dependencies = [
+    "streamlit>=1.60.0",
+    "qdrant-client>=1.12.0",
+    "sentence-transformers>=3.0.0",
+    "rank-bm25>=0.2.2",
+    "google-genai>=0.1.0",
+    "openai>=1.50.0",
+    "httpx>=0.27.0",
+    "pydantic>=2.9.0",
+    "numpy>=1.26.0",
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",  # Added torchvision
+    "transformers>=4.30.0",
+    "tokenizers>=0.13.0",
+    "pillow>=10.0.0",  # Required by torchvision
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "black>=24.0.0",
+    "ruff>=0.3.0",
+    "mypy>=1.8.0",
+    "pre-commit>=3.5.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/tuixiu/tuixiu-bible-search"
+Repository = "https://github.com/tuixiu/tuixiu-bible-search"
+Issues = "https://github.com/tuixiu/tuixiu-bible-search/issues"
+
+# Hatch configuration for flat structure
+[tool.hatch.build.targets.wheel]
+packages = ["engine"]
+exclude = [
+    "tests",
+    "data",
+    "*.pyc",
+    "__pycache__",
+]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "tests",
+    "*.pyc",
+    "__pycache__",
+    ".git",
+    ".github",
+    ".vscode",
+]
+
+[tool.black]
+line-length = 100
+target-version = ['py314']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "W",   # pycodestyle warnings
+    "I",   # isort
+    "N",   # pep8-naming
+    "D",   # pydocstyle
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+]
+ignore = [
+    "D100", # Missing docstring in public module
+    "D104", # Missing docstring in public package
+    "D107", # Missing docstring in __init__
+    "D203", # 1 blank line required before class docstring
+    "D212", # Multi-line docstring summary should start at the first line
+    "E501", # Line too long (handled by black)
+]
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist",
+    "tests",
+]
+
+[tool.ruff.isort]
+known-first-party = ["engine"]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = false
+disallow_untyped_defs = true
+disallow_any_unimported = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+strict_concatenate = true
+explicit_package_bases = true
+check_untyped_defs = true
+disallow_subclassing_any = true
+disallow_any_generics = true
+disallow_any_decorated = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --strict-markers"
+testpaths = [
+    "tests",
+]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+
+[tool.coverage.run]
+source = ["engine", "app.py", "config.py"]
+omit = ["tests/*", "*/__pycache__/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if __name__ == .__main__.:",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if False:",
+]

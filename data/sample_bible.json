@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "book": "Genesis",
+    "chapter": 1,
+    "verse": 1,
+    "text": "In the beginning God created the heavens and the earth.",
+    "testament": "OT",
+    "category": "Creation"
+  },
+  {
+    "id": 2,
+    "book": "Genesis",
+    "chapter": 1,
+    "verse": 27,
+    "text": "So God created mankind in his own image, in the image of God he created them; male and female he created them.",
+    "testament": "OT",
+    "category": "Creation"
+  },
+  {
+    "id": 3,
+    "book": "Psalms",
+    "chapter": 23,
+    "verse": 1,
+    "text": "The Lord is my shepherd; I shall not want.",
+    "testament": "OT",
+    "category": "Worship"
+  },
+  {
+    "id": 4,
+    "book": "Psalms",
+    "chapter": 23,
+    "verse": 4,
+    "text": "Yea, though I walk through the valley of the shadow of death, I will fear no evil: for thou art with me; thy rod and thy staff they comfort me.",
+    "testament": "OT",
+    "category": "Comfort"
+  },
+  {
+    "id": 5,
+    "book": "Isaiah",
+    "chapter": 40,
+    "verse": 31,
+    "text": "But they that wait upon the Lord shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint.",
+    "testament": "OT",
+    "category": "Prophecy"
+  },
+  {
+    "id": 6,
+    "book": "Isaiah",
+    "chapter": 53,
+    "verse": 5,
+    "text": "But he was wounded for our transgressions, he was bruised for our iniquities: the chastisement of our peace was upon him; and with his stripes we are healed.",
+    "testament": "OT",
+    "category": "Prophecy"
+  },
+  {
+    "id": 7,
+    "book": "Matthew",
+    "chapter": 5,
+    "verse": 3,
+    "text": "Blessed are the poor in spirit: for theirs is the kingdom of heaven.",
+    "testament": "NT",
+    "category": "Sermon on the Mount"
+  },
+  {
+    "id": 8,
+    "book": "Matthew",
+    "chapter": 5,
+    "verse": 8,
+    "text": "Blessed are the pure in heart: for they shall see God.",
+    "testament": "NT",
+    "category": "Sermon on the Mount"
+  },
+  {
+    "id": 9,
+    "book": "John",
+    "chapter": 3,
+    "verse": 16,
+    "text": "For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.",
+    "testament": "NT",
+    "category": "Salvation"
+  },
+  {
+    "id": 10,
+    "book": "John",
+    "chapter": 14,
+    "verse": 6,
+    "text": "Jesus answered, I am the way and the truth and the life. No one comes to the Father except through me.",
+    "testament": "NT",
+    "category": "Salvation"
+  },
+  {
+    "id": 11,
+    "book": "Romans",
+    "chapter": 8,
+    "verse": 28,
+    "text": "And we know that in all things God works for the good of those who love him, who have been called according to his purpose.",
+    "testament": "NT",
+    "category": "Faith"
+  },
+  {
+    "id": 12,
+    "book": "Romans",
+    "chapter": 12,
+    "verse": 2,
+    "text": "Do not conform to the pattern of this world, but be transformed by the renewing of your mind. Then you will be able to test and approve what God's will is—his good, pleasing and perfect will.",
+    "testament": "NT",
+    "category": "Faith"
+  }
+]
