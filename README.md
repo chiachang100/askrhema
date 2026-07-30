@@ -27,8 +27,8 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 pip install uv
 ```
 
-2. Clone/Initialize Project
-bash
+### 2. Clone/Initialize Project
+```bash
 # Create project directory
 uv init tuixiu-bible-search --app
 cd tuixiu-bible-search
@@ -45,11 +45,15 @@ cd tuixiu-bible-search
 # │   └── llm_provider.py
 # └── data/
 #     └── sample_bible.json
-3. Pin Python Version
-bash
+```
+
+### 3. Pin Python Version
+```bash
 uv python pin 3.14
-4. Install Dependencies
-bash
+```
+
+### 4. Install Dependencies
+```bash
 # Install all dependencies
 uv add "streamlit@latest" \
        "qdrant-client@latest" \
@@ -66,27 +70,35 @@ uv add "streamlit@latest" \
 
 # Generate lockfile
 uv lock
-🚀 Running the Application
-Start the Application
-bash
-uv run streamlit run app.py
-The application will open in your browser at http://localhost:8501.
+```
 
-⚙️ Configuration
-Ollama Setup
-Install Ollama from ollama.ai
+## 🚀 Running the Application
+Start the Application
+```bash
+uv run streamlit run app.py
+```
+
+The application will open in your browser at `http://localhost:8501`.
+
+## ⚙️ Configuration
+### Ollama Setup
+Install Ollama from `ollama.ai`
 
 Pull a model:
 
-bash
+```bash
 ollama pull llama2
 # or
 ollama pull llama3
+```
+
 Ensure Ollama is running:
 
-bash
+```bash
 ollama serve
-Google Gemini Setup
+```
+
+### Google Gemini Setup
 Get API key from Google AI Studio
 
 Enter the API key in the app sidebar
@@ -96,20 +108,16 @@ Get API key from OpenAI Platform
 
 Enter the API key in the app sidebar
 
-🔍 Using the Application
-Search: Enter a query in the search box and click "Search"
+## 🔍 Using the Application
+- Search: Enter a query in the search box and click "Search"
+- Filter: Use sidebar filters to narrow by book or testament
+- Fast Mode: Toggle for quick semantic-only search
+- AI Mode: Enable AI exegesis for analyzed results
+- Provider: Choose between Ollama, Google Gemini, or OpenAI
 
-Filter: Use sidebar filters to narrow by book or testament
-
-Fast Mode: Toggle for quick semantic-only search
-
-AI Mode: Enable AI exegesis for analyzed results
-
-Provider: Choose between Ollama, Google Gemini, or OpenAI
-
-🛠️ Development
-Code Quality
-bash
+## 🛠️ Development
+### Code Quality
+```bash
 # Run formatter
 uv run black .
 
@@ -118,64 +126,81 @@ uv run ruff check .
 
 # Run type checker
 uv run mypy .
-Testing
-bash
+```
+
+### Testing
+```bash
 # Run tests
 uv run pytest
+```
+
 Updating Dependencies
-bash
+```bash
 # Update to latest versions
 uv sync --upgrade
-📊 Architecture
-Frontend: Streamlit with custom CSS
+```
 
-Vector Search: Qdrant in-memory with sentence-transformers
+## 📊 Architecture
+- Frontend: Streamlit with custom CSS
+- Vector Search: Qdrant in-memory with sentence-transformers
+- Sparse Search: BM25Okapi from rank-bm25
+- Fusion: Reciprocal Rank Fusion (RRF) with k=60
+- AI: Streaming via Ollama, Google, or OpenAI
 
-Sparse Search: BM25Okapi from rank-bm25
-
-Fusion: Reciprocal Rank Fusion (RRF) with k=60
-
-AI: Streaming via Ollama, Google, or OpenAI
-
-🐛 Troubleshooting
-Common Issues
+## 🐛 Troubleshooting
+### Common Issues
 Qdrant in-memory issues:
 
 No configuration needed - runs entirely in memory
 
-Ollama connection errors:
+### Ollama connection errors:
+- Ensure Ollama is running: ollama serve
+- Check port: `http://localhost:11434`
 
-Ensure Ollama is running: ollama serve
-
-Check port: http://localhost:11434
-
-API key errors:
+### API key errors:
 
 Verify API keys are entered correctly in the sidebar
 
 Ensure your Google/OpenAI account has access to the selected models
 
-Memory issues:
+### Memory issues:
 
 The embedding model uses memory; consider using smaller models
 
 Reduce batch sizes in config.py
 
-Logs
+## Logs
 Check Streamlit logs for detailed error messages:
 
-bash
+```bash
 uv run streamlit run app.py --logger.level=debug
-📝 License
-MIT License
+```
 
-🙏 Acknowledgments
+---
+
+## License
+
+RustVerdict is licensed under either of the following licenses, at your option:
+
+- MIT License
+- Apache License 2.0
+
+You may choose either license when using, modifying, or distributing RustVerdict.
+
+See:
+
+- [LICENSE-MIT](./LICENSE-MIT)
+- [LICENSE-APACHE](./LICENSE-APACHE)
+
+---
+
+## 🙏 Acknowledgments
 Built with Streamlit, Qdrant, and sentence-transformers
 
 BM25 implementation from rank-bm25
 
 AI integration with Ollama, Google Gemini, and OpenAI
 
-Happy Bible Searching! 📖✨
+**Happy Bible Searching! 📖✨**
 
 ---
