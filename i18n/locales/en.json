@@ -1,0 +1,115 @@
+{
+  "app": {
+    "title": "📖 TBS — Tuixiu Bible Search",
+    "subtitle": "Hybrid Bible Search with AI-Powered Exegesis",
+    "version": "v1.0.0",
+    "powered_by": "Powered by Hybrid Search & AI"
+  },
+  "ui": {
+    "search": {
+      "placeholder": "Enter your search query (e.g., 'God created', 'faith in action', 'for God so loved')",
+      "button": "🔍 Search",
+      "fast_mode": "⚡ Fast Mode",
+      "fast_mode_help": "Use only dense vector search (faster but less comprehensive)",
+      "depth": "📊 Results Depth",
+      "depth_help": "Number of search results to return"
+    },
+    "sidebar": {
+      "title": "TBS Config",
+      "provider": "🤖 AI Provider",
+      "provider_help": "Select the LLM provider for AI exegesis",
+      "model": "🧠 Model",
+      "model_help": "Select the model to use for AI responses",
+      "api_keys": "🔑 API Keys",
+      "ollama_status": "🔄 Check Ollama Status",
+      "ollama_help": "Using local Ollama at http://localhost:11434",
+      "google_key": "Google API Key",
+      "google_help": "Enter your Google Gemini API key from Google AI Studio",
+      "openai_key": "OpenAI API Key",
+      "openai_help": "Enter your OpenAI API key from platform.openai.com",
+      "filters": "🎯 Filters",
+      "book": "📖 Book",
+      "book_help": "Filter by book of the Bible",
+      "testament": "📜 Testament",
+      "testament_help": "Filter by Old or New Testament",
+      "ai_mode": "🤖 AI Exegesis Mode",
+      "ai_mode_help": "Enable AI-powered analysis of the search results",
+      "statistics": "📊 Statistics",
+      "searches": "Searches",
+      "last_search": "Last search"
+    },
+    "results": {
+      "found": "Found {count} results",
+      "no_results": "No results found. Try adjusting your search query or filters.",
+      "search_examples": "💡 Search Examples",
+      "tips": "🎯 Tips",
+      "tips_quotes": "Use quotes for exact phrases",
+      "tips_ai": "Enable AI Exegesis for deep analysis",
+      "tips_fast": "Use Fast Mode for quicker results",
+      "tips_filters": "Filter by book or testament for focused searches"
+    },
+    "ai": {
+      "exegesis": "🤖 AI Exegesis",
+      "generating": "Generating insights...",
+      "error": "Error generating AI response",
+      "provider_error": "AI Provider Error"
+    },
+    "errors": {
+      "bible_data": "Bible data file not found",
+      "bible_data_help": "Please ensure the data directory contains sample_bible.json",
+      "init_failed": "Failed to initialize search engine",
+      "search_failed": "Search failed",
+      "no_verses": "No verses loaded in search engine"
+    },
+    "status": {
+      "initializing": "Initializing search engine...",
+      "initialized": "Search engine initialized!",
+      "searching": "Searching..."
+    },
+    "debug": {
+      "title": "🔧 Debug Info",
+      "engine_status": "Engine Status"
+    },
+    "footer": {
+      "year": "2024"
+    }
+  },
+  "bible": {
+    "books": {
+      "all": "All",
+      "genesis": "Genesis",
+      "psalms": "Psalms",
+      "isaiah": "Isaiah",
+      "matthew": "Matthew",
+      "john": "John",
+      "romans": "Romans"
+    },
+    "testaments": {
+      "all": "All",
+      "ot": "OT",
+      "nt": "NT"
+    },
+    "categories": {
+      "creation": "Creation",
+      "worship": "Worship",
+      "comfort": "Comfort",
+      "prophecy": "Prophecy",
+      "sermon": "Sermon on the Mount",
+      "salvation": "Salvation",
+      "faith": "Faith"
+    }
+  },
+  "llm": {
+    "providers": {
+      "ollama": "🏠 Local Ollama",
+      "google": "☁️ Google Gemini",
+      "openai": "☁️ OpenAI"
+    },
+    "models": {
+      "ollama": "Ollama",
+      "google": "Google Gemini",
+      "openai": "OpenAI"
+    },
+    "system_prompt": "You are TBS (Tuixiu Bible Search), an expert biblical assistant. Ground your answer strictly in the provided Bible passages. Always cite the Book, Chapter, and Verse for every passage reference."
+  }
+}

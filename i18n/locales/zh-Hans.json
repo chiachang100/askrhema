@@ -1,0 +1,115 @@
+{
+  "app": {
+    "title": "📖 TBS — 退修圣经搜索",
+    "subtitle": "混合式圣经搜索与AI解经",
+    "version": "v1.0.0",
+    "powered_by": "由混合搜索与AI驱动"
+  },
+  "ui": {
+    "search": {
+      "placeholder": "输入搜索关键词（例如：'神创造'、'信心行动'、'神爱世人'）",
+      "button": "🔍 搜索",
+      "fast_mode": "⚡ 快速模式",
+      "fast_mode_help": "仅使用密集向量搜索（更快但覆盖不全面）",
+      "depth": "📊 结果深度",
+      "depth_help": "返回的搜索结果数量"
+    },
+    "sidebar": {
+      "title": "TBS 配置",
+      "provider": "🤖 AI 提供商",
+      "provider_help": "选择AI解经的LLM提供商",
+      "model": "🧠 模型",
+      "model_help": "选择用于AI响应的模型",
+      "api_keys": "🔑 API 密钥",
+      "ollama_status": "🔄 检查 Ollama 状态",
+      "ollama_help": "使用本地 Ollama 服务 at http://localhost:11434",
+      "google_key": "Google API 密钥",
+      "google_help": "从 Google AI Studio 输入您的 Google Gemini API 密钥",
+      "openai_key": "OpenAI API 密钥",
+      "openai_help": "从 platform.openai.com 输入您的 OpenAI API 密钥",
+      "filters": "🎯 筛选器",
+      "book": "📖 书卷",
+      "book_help": "按圣经书卷筛选",
+      "testament": "📜 约书",
+      "testament_help": "按旧约或新约筛选",
+      "ai_mode": "🤖 AI 解经模式",
+      "ai_mode_help": "启用AI驱动的搜索结果分析",
+      "statistics": "📊 统计",
+      "searches": "搜索次数",
+      "last_search": "上次搜索"
+    },
+    "results": {
+      "found": "找到 {count} 个结果",
+      "no_results": "未找到结果。请调整搜索关键词或筛选条件。",
+      "search_examples": "💡 搜索示例",
+      "tips": "🎯 提示",
+      "tips_quotes": "使用引号进行精确短语搜索",
+      "tips_ai": "启用AI解经进行深度分析",
+      "tips_fast": "使用快速模式获得更快结果",
+      "tips_filters": "按书卷或约书筛选进行精确搜索"
+    },
+    "ai": {
+      "exegesis": "🤖 AI 解经",
+      "generating": "正在生成洞察...",
+      "error": "生成AI响应时出错",
+      "provider_error": "AI提供商错误"
+    },
+    "errors": {
+      "bible_data": "找不到圣经数据文件",
+      "bible_data_help": "请确保 data 目录包含 sample_bible.json",
+      "init_failed": "初始化搜索引擎失败",
+      "search_failed": "搜索失败",
+      "no_verses": "搜索引擎中未加载经文"
+    },
+    "status": {
+      "initializing": "正在初始化搜索引擎...",
+      "initialized": "搜索引擎初始化成功！",
+      "searching": "正在搜索..."
+    },
+    "debug": {
+      "title": "🔧 调试信息",
+      "engine_status": "引擎状态"
+    },
+    "footer": {
+      "year": "2024"
+    }
+  },
+  "bible": {
+    "books": {
+      "all": "全部",
+      "genesis": "创世记",
+      "psalms": "诗篇",
+      "isaiah": "以赛亚书",
+      "matthew": "马太福音",
+      "john": "约翰福音",
+      "romans": "罗马书"
+    },
+    "testaments": {
+      "all": "全部",
+      "ot": "旧约",
+      "nt": "新约"
+    },
+    "categories": {
+      "creation": "创造",
+      "worship": "敬拜",
+      "comfort": "安慰",
+      "prophecy": "预言",
+      "sermon": "登山宝训",
+      "salvation": "救恩",
+      "faith": "信心"
+    }
+  },
+  "llm": {
+    "providers": {
+      "ollama": "🏠 本地 Ollama",
+      "google": "☁️ Google Gemini",
+      "openai": "☁️ OpenAI"
+    },
+    "models": {
+      "ollama": "Ollama",
+      "google": "Google Gemini",
+      "openai": "OpenAI"
+    },
+    "system_prompt": "您是TBS（退修圣经搜索），一位专业的圣经助手。请严格根据提供的圣经经文来回答。对于每一处经文引用，请务必注明书卷、章节和经文编号。"
+  }
+}

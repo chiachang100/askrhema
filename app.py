@@ -1,4 +1,3 @@
-# app.py (Minimal changes for Streamlit 1.60+)
 """Main Streamlit UI application for TBS (Tuixiu Bible Search)."""
 
 import json
@@ -8,8 +7,14 @@ from typing import Optional, List, Dict, Any, Generator
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+import logging
 
-from config import DEFAULT_SEARCH_CONFIG, DEFAULT_LLM_CONFIG, get_system_prompt
+from config import (
+    DEFAULT_SEARCH_CONFIG, 
+    DEFAULT_LLM_CONFIG, 
+    get_system_prompt,
+    DEFAULT_LANGUAGE_CONFIG
+)
 from engine import (
     load_bible_data,
     get_verse_reference,
@@ -20,7 +25,10 @@ from engine import (
     BibleDataError,
     LLMProviderError
 )
+from i18n import get_translations
 
+# Setup logging
+logger = logging.getLogger(__name__)
 
 # Page configuration
 st.set_page_config(
@@ -30,8 +38,10 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Initialize translations
+translations = get_translations()
 
-# Custom CSS (keep your existing CSS here)
+# Custom CSS (keep your existing CSS, but I'll add language-specific adjustments)
 st.markdown("""
     <style>
     .main-header {
@@ -205,6 +215,20 @@ st.markdown("""
         transform: translateY(-2px);
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+    .success-message {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #28a745;
+    }
+    .error-message {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #dc3545;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -227,7 +251,8 @@ def initialize_session_state() -> None:
         "last_search_time": None,
         "search_count": 0,
         "error_message": None,
-        "search_triggered": False
+        "search_triggered": False,
+        "language": DEFAULT_LANGUAGE_CONFIG.default_language
     }
     
     for key, default_value in defaults.items():
@@ -247,46 +272,66 @@ def get_search_engine() -> HybridSearchEngine:
     return HybridSearchEngine()
 
 
-def display_sidebar() -> tuple[str, str, str, bool, int, Optional[str], Optional[str]]:
+def display_sidebar() -> tuple[str, str, str, bool, int, Optional[str], Optional[str], str]:
     """Display the sidebar and return configuration values."""
+    t = translations
+    
     st.sidebar.markdown('<div class="sidebar-logo">📖</div>', unsafe_allow_html=True)
-    st.sidebar.markdown('<div class="sidebar-title">TBS Config</div>', unsafe_allow_html=True)
+    st.sidebar.markdown(f'<div class="sidebar-title">{t.get("ui.sidebar.title")}</div>', unsafe_allow_html=True)
+    st.sidebar.divider()
+    
+    # Language selection
+    st.sidebar.subheader("🌐 Language")
+    lang_options = list(t.get_available_languages().keys())
+    lang_display = list(t.get_available_languages().values())
+    
+    current_lang = st.session_state.get("language", "en")
+    current_index = lang_options.index(current_lang) if current_lang in lang_options else 0
+    
+    language = st.sidebar.selectbox(
+        label="Select Language",
+        options=lang_options,
+        format_func=lambda x: t.get_available_languages().get(x, x),
+        key="language_select"
+    )
+    
+    if language != st.session_state.get("language"):
+        st.session_state.language = language
+        # Reload translations for the new language
+        translations.set_language(language)
+    
     st.sidebar.divider()
     
     # Provider selection
-    st.sidebar.subheader("🤖 AI Provider")
+    st.sidebar.subheader(t.get("ui.sidebar.provider"))
     provider = st.sidebar.selectbox(
-        label="Select Provider",
+        label=t.get("ui.sidebar.provider"),
         options=["ollama", "google", "openai"],
-        format_func=lambda x: {
-            "ollama": "🏠 Local Ollama",
-            "google": "☁️ Google Gemini",
-            "openai": "☁️ OpenAI"
-        }.get(x, x),
-        help="Select the LLM provider for AI exegesis",
+        format_func=lambda x: t.get(f"llm.providers.{x}", x),
+        help=t.get("ui.sidebar.provider_help"),
         key="provider_select"
     )
     st.session_state.selected_provider = provider
     
     # Model selection
-    st.sidebar.subheader("🧠 Model")
+    st.sidebar.subheader(t.get("ui.sidebar.model"))
     models = get_available_models(provider)
     default_model = models[0] if models else ""
     model = st.sidebar.selectbox(
-        label="Select Model",
+        label=t.get("ui.sidebar.model"),
         options=models,
-        help="Select the model to use for AI responses",
+        help=t.get("ui.sidebar.model_help"),
         key="model_select"
     )
     st.session_state.selected_model = model
     
     # API key inputs
-    st.sidebar.subheader("🔑 API Keys")
+    st.sidebar.subheader(t.get("ui.sidebar.api_keys"))
     api_key = None
     
     if provider == "ollama":
-        st.sidebar.info("🔗 Using local Ollama at http://localhost:11434")
-        if st.sidebar.button("🔄 Check Ollama Status", use_container_width=True):
+        st.sidebar.info(t.get("ui.sidebar.ollama_help"))
+        if st.sidebar.button(t.get("ui.sidebar.ollama_status"), use_container_width=True):
             try:
                 import httpx
                 response = httpx.get("http://localhost:11434/api/tags", timeout=5.0)
@@ -302,10 +347,10 @@ def display_sidebar() -> tuple[str, str, str, bool, int, Optional[str], Optional
                 st.sidebar.error(f"❌ Cannot connect: {str(e)}")
     elif provider == "google":
         api_key = st.sidebar.text_input(
-            label="Google API Key",
+            label=t.get("ui.sidebar.google_key"),
             value=st.session_state.google_api_key,
             type="password",
-            help="Enter your Google Gemini API key from Google AI Studio",
+            help=t.get("ui.sidebar.google_help"),
             placeholder="AIza...",
             key="google_api_input"
         )
@@ -314,10 +359,10 @@ def display_sidebar() -> tuple[str, str, str, bool, int, Optional[str], Optional
             st.sidebar.warning("⚠️ Please enter your Google API key")
     elif provider == "openai":
         api_key = st.sidebar.text_input(
-            label="OpenAI API Key",
+            label=t.get("ui.sidebar.openai_key"),
             value=st.session_state.openai_api_key,
             type="password",
-            help="Enter your OpenAI API key from platform.openai.com",
+            help=t.get("ui.sidebar.openai_help"),
             placeholder="sk-...",
             key="openai_api_input"
         )
@@ -331,38 +376,44 @@ def display_sidebar() -> tuple[str, str, str, bool, int, Optional[str], Optional
     st.sidebar.subheader("🔍 Search Settings")
     
     top_k = st.sidebar.slider(
-        label="📊 Results Depth",
+        label=t.get("ui.search.depth"),
         min_value=1,
         max_value=10,
         value=DEFAULT_SEARCH_CONFIG.top_k,
-        help="Number of search results to return",
+        help=t.get("ui.search.depth_help"),
         key="top_k_slider"
     )
     
     fast_mode = st.sidebar.toggle(
-        label="⚡ Fast Mode",
+        label=t.get("ui.search.fast_mode"),
         value=st.session_state.fast_mode,
-        help="Use only dense vector search (faster but less comprehensive)",
+        help=t.get("ui.search.fast_mode_help"),
         key="fast_mode_toggle"
     )
     st.session_state.fast_mode = fast_mode
     
     # Filters
-    st.sidebar.subheader("🎯 Filters")
+    st.sidebar.subheader(t.get("ui.sidebar.filters"))
     
-    books = ["All", "Genesis", "Psalms", "Isaiah", "Matthew", "John", "Romans"]
+    books = ["All"] + ["Genesis", "Psalms", "Isaiah", "Matthew", "John", "Romans"]
+    book_display = [t.get("bible.books.all")] + [
+        t.get(f"bible.books.{book.lower()}", book) for book in books[1:]
+    ]
     
     book_filter = st.sidebar.selectbox(
-        label="📖 Book",
+        label=t.get("ui.sidebar.book"),
         options=books,
-        help="Filter by book of the Bible",
+        format_func=lambda x: t.get(f"bible.books.{x.lower()}", x) if x != "All" else t.get("bible.books.all"),
+        help=t.get("ui.sidebar.book_help"),
         key="book_filter_select"
     )
     
+    testament_options = ["All", "OT", "NT"]
     testament_filter = st.sidebar.selectbox(
-        label="📜 Testament",
-        options=["All", "OT", "NT"],
-        help="Filter by Old or New Testament",
+        label=t.get("ui.sidebar.testament"),
+        options=testament_options,
+        format_func=lambda x: t.get(f"bible.testaments.{x.lower()}", x) if x != "All" else t.get("bible.testaments.all"),
+        help=t.get("ui.sidebar.testament_help"),
         key="testament_filter_select"
     )
     
@@ -371,9 +422,9 @@ def display_sidebar() -> tuple[str, str, str, bool, int, Optional[str], Optional
     # AI Mode toggle
     st.sidebar.subheader("🧠 AI Features")
     ai_mode = st.sidebar.toggle(
-        label="🤖 AI Exegesis Mode",
+        label=t.get("ui.sidebar.ai_mode"),
         value=st.session_state.ai_mode,
-        help="Enable AI-powered analysis of the search results",
+        help=t.get("ui.sidebar.ai_mode_help"),
         key="ai_mode_toggle"
     )
     st.session_state.ai_mode = ai_mode
@@ -381,16 +432,18 @@ def display_sidebar() -> tuple[str, str, str, bool, int, Optional[str], Optional
     # Display stats
     if st.session_state.search_count > 0:
         st.sidebar.divider()
-        st.sidebar.subheader("📊 Statistics")
-        st.sidebar.metric("Searches", st.session_state.search_count)
+        st.sidebar.subheader(t.get("ui.sidebar.statistics"))
+        st.sidebar.metric(t.get("ui.sidebar.searches"), st.session_state.search_count)
         if st.session_state.last_search_time:
-            st.sidebar.caption(f"Last search: {st.session_state.last_search_time}")
+            st.sidebar.caption(f"{t.get('ui.sidebar.last_search')}: {st.session_state.last_search_time}")
     
-    return provider, model, api_key, ai_mode, top_k, book_filter, testament_filter
+    return provider, model, api_key, ai_mode, top_k, book_filter, testament_filter, language
 
 
 def display_verse_card(result: SearchResult, index: int) -> None:
     """Display a single verse card with enhanced styling."""
+    t = translations
+    
     # Determine score badge class
     score_class = "medium"
     if result.fused_score > 0.5:
@@ -424,11 +477,14 @@ def generate_ai_response(
     query: str,
     api_key: Optional[str],
     results: List[SearchResult],
-    system_prompt: str
+    system_prompt: str,
+    language: str = "en"
 ) -> None:
     """Generate and stream AI response based on search results."""
+    t = translations
+    
     if not results:
-        st.warning("No search results to analyze")
+        st.warning(t.get("ui.results.no_results"))
         return
     
     # Prepare context from search results
@@ -442,8 +498,24 @@ def generate_ai_response(
         for r in results[:5]
     ]
     
-    # Generate a comprehensive prompt
-    prompt = f"""Please provide a thorough exegetical analysis of the following Bible passages found for the query: "{query}"
+    # Generate prompt based on language
+    if language.startswith("zh"):
+        prompt = f"""请根据以下查询 "{query}" 找到的圣经经文提供全面的解经分析：
+
+上下文经文：
+{chr(10).join([f"- {v['book']} {v['chapter']}:{v['verse']}: {v['text']}" for v in context_verses])}
+
+请按以下结构组织您的回答：
+
+1. **摘要**：简要概述这些经文及其与查询的关联
+2. **神学主题**：这些经文中呈现的关键神学概念和教义
+3. **历史背景**：重要的历史或文化背景
+4. **实际应用**：这些经文如何应用于现代基督徒生活
+5. **关联经文**：这些经文与其他相关圣经章节的互联关系
+
+请用清晰的部分组织您的回答，提供适当的引用，保持学术性但易于理解的语气。保持全面但简洁。所有见解都基于所提供的经文。"""
+    else:
+        prompt = f"""Please provide a thorough exegetical analysis of the following Bible passages found for the query: "{query}"
 
 Context Passages:
 {chr(10).join([f"- {v['book']} {v['chapter']}:{v['verse']}: {v['text']}" for v in context_verses])}
@@ -464,19 +536,22 @@ Be thorough but concise. Ground all insights in the provided scripture passages.
     full_response = ""
     
     try:
-        with st.spinner("Generating AI exegesis..."):
-            response_container.markdown("""
+        with st.spinner(t.get("ui.ai.generating")):
+            response_container.markdown(f"""
             <div class="ai-response">
-                <h4>🤖 AI Exegesis <span style="display:inline-block;animation:spin 1s linear infinite;">⏳</span></h4>
-                <p><em>Generating insights...</em></p>
+                <h4>{t.get("ui.ai.exegesis")} <span style="display:inline-block;animation:spin 1s linear infinite;">⏳</span></h4>
+                <p><em>{t.get("ui.ai.generating")}</em></p>
             </div>
             """, unsafe_allow_html=True)
+            
+            # Use language-specific system prompt
+            lang_system_prompt = get_system_prompt(language)
             
             for chunk in stream_llm_response(
                 provider=provider,
                 model_name=model,
                 prompt=prompt,
-                system_prompt=system_prompt,
+                system_prompt=lang_system_prompt,
                 api_key=api_key,
                 context_verses=context_verses,
                 temperature=0.7,
@@ -485,7 +560,7 @@ Be thorough but concise. Ground all insights in the provided scripture passages.
                 full_response += chunk
                 response_container.markdown(f"""
                 <div class="ai-response">
-                    <h4>🤖 AI Exegesis</h4>
+                    <h4>{t.get("ui.ai.exegesis")}</h4>
                     <div style="margin-top: 1rem; line-height: 1.8;">
                         {full_response}
                     </div>
@@ -493,10 +568,10 @@ Be thorough but concise. Ground all insights in the provided scripture passages.
                 """, unsafe_allow_html=True)
                 
     except LLMProviderError as e:
-        st.error(f"AI Provider Error: {str(e)}")
+        st.error(f"{t.get('ui.ai.provider_error')}: {str(e)}")
         response_container.empty()
     except Exception as e:
-        st.error(f"Error generating AI response: {str(e)}")
+        st.error(f"{t.get('ui.ai.error')}: {str(e)}")
         response_container.empty()
 
 
@@ -539,20 +614,26 @@ def handle_search(
         
     except Exception as e:
         st.session_state.error_message = str(e)
+        logger.error(f"Search error: {str(e)}", exc_info=True)
         return []
 
 
 def main() -> None:
     """Main application entry point."""
+    t = translations
     initialize_session_state()
+    
+    # Set language from session state
+    current_lang = st.session_state.get("language", "en")
+    translations.set_language(current_lang)
     
     # Load Bible data
     data_path = Path(__file__).parent / "data" / "sample_bible.json"
     try:
         verses = load_bible_data_cached(str(data_path))
     except FileNotFoundError:
-        st.error(f"❌ Bible data file not found: {data_path}")
-        st.info("Please ensure the data directory contains sample_bible.json")
+        st.error(f"❌ {t.get('ui.errors.bible_data')}: {data_path}")
+        st.info(t.get("ui.errors.bible_data_help"))
         st.stop()
     except BibleDataError as e:
         st.error(f"❌ Bible data validation error: {str(e)}")
@@ -564,27 +645,28 @@ def main() -> None:
     # Initialize search engine
     search_engine = get_search_engine()
     if not st.session_state.initialized:
-        with st.spinner("🔮 Initializing search engine..."):
+        with st.spinner(t.get("ui.status.initializing")):
             try:
                 search_engine.initialize(verses)
                 st.session_state.search_engine = search_engine
                 st.session_state.initialized = True
+                st.success(f"✅ {t.get('ui.status.initialized')}")
             except Exception as e:
-                st.error(f"❌ Failed to initialize search engine: {str(e)}")
+                st.error(f"❌ {t.get('ui.errors.init_failed')}: {str(e)}")
                 st.stop()
     
     # Sidebar configuration
-    provider, model, api_key, ai_mode, top_k, book_filter, testament_filter = display_sidebar()
+    provider, model, api_key, ai_mode, top_k, book_filter, testament_filter, language = display_sidebar()
     
     # Main content
     col1, col2 = st.columns([4, 1])
     with col1:
-        st.markdown('<div class="main-header">📖 TBS — Tuixiu Bible Search</div>', unsafe_allow_html=True)
-        st.markdown('<div class="sub-header">Hybrid Bible Search with AI-Powered Exegesis</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="main-header">{t.get("app.title")}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="sub-header">{t.get("app.subtitle")}</div>', unsafe_allow_html=True)
     
     with col2:
         if st.session_state.search_count > 0:
-            st.metric("Searches", st.session_state.search_count)
+            st.metric(t.get("ui.sidebar.searches"), st.session_state.search_count)
     
     st.divider()
     
@@ -592,8 +674,8 @@ def main() -> None:
     col1, col2 = st.columns([4, 1])
     with col1:
         query = st.text_input(
-            label="🔍 Search the Bible",
-            placeholder="Enter your search query (e.g., 'God created', 'faith in action', 'for God so loved')",
+            label="Search",
+            placeholder=t.get("ui.search.placeholder"),
             value=st.session_state.query,
             label_visibility="collapsed",
             key="search_input"
@@ -602,7 +684,7 @@ def main() -> None:
     
     with col2:
         search_button = st.button(
-            label="🔍 Search",
+            label=t.get("ui.search.button"),
             type="primary",
             use_container_width=True,
             key="search_button"
@@ -614,7 +696,7 @@ def main() -> None:
     
     if st.session_state.search_triggered and query:
         st.session_state.search_triggered = False
-        with st.spinner("🔍 Searching..."):
+        with st.spinner(t.get("ui.status.searching")):
             results = handle_search(
                 search_engine,
                 query,
@@ -631,8 +713,7 @@ def main() -> None:
         st.markdown(f"""
         <div class="search-stats">
             <div class="stat-item">
-                <span>📊 Found</span>
-                <span class="stat-value">{len(results)} results</span>
+                <span>📊 {t.get('ui.results.found').format(count=len(results))}</span>
             </div>
             <div class="stat-item">
                 <span>🔍 Query</span>
@@ -658,14 +739,15 @@ def main() -> None:
         # AI Response
         if ai_mode and results:
             st.divider()
-            with st.expander("🤖 AI Exegesis", expanded=True):
+            with st.expander(t.get("ui.ai.exegesis"), expanded=True):
                 generate_ai_response(
                     provider=provider,
                     model=model,
                     query=query,
                     api_key=api_key if provider in ["google", "openai"] else None,
                     results=results,
-                    system_prompt=get_system_prompt()
+                    system_prompt=get_system_prompt(language),
+                    language=language
                 )
     
     elif st.session_state.get("error_message"):
@@ -673,12 +755,12 @@ def main() -> None:
         st.session_state.error_message = None
     
     elif search_button and query:
-        st.info("🔍 No results found. Try adjusting your search query or filters.")
+        st.info(t.get("ui.results.no_results"))
     
     elif not query:
         # Show helpful examples
-        st.markdown("""
-        ### 💡 Search Examples
+        st.markdown(f"""
+        ### {t.get('ui.results.search_examples')}
         <div class="example-grid">
             <div class="example-chip">"God created"</div>
             <div class="example-chip">"faith salvation"</div>
@@ -688,19 +770,19 @@ def main() -> None:
             <div class="example-chip">"shepherd"</div>
         </div>
         
-        ### 🎯 Tips
-        - Use quotes for exact phrases
-        - Enable AI Exegesis for deep analysis
-        - Use Fast Mode for quicker results
-        - Filter by book or testament for focused searches
+        ### {t.get('ui.results.tips')}
+        - {t.get('ui.results.tips_quotes')}
+        - {t.get('ui.results.tips_ai')}
+        - {t.get('ui.results.tips_fast')}
+        - {t.get('ui.results.tips_filters')}
         """, unsafe_allow_html=True)
     
     # Footer
     st.divider()
     st.markdown(f"""
     <div class="footer">
-        <strong>📖 TBS — Tuixiu Bible Search</strong> v1.0.0
-        &nbsp;•&nbsp; Powered by Hybrid Search &amp; AI
+        <strong>{t.get('app.title')}</strong> {t.get('app.version')}
+        &nbsp;•&nbsp; {t.get('app.powered_by')}
         &nbsp;•&nbsp; {datetime.now().strftime('%Y')}
     </div>
     """, unsafe_allow_html=True)

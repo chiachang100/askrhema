@@ -52,7 +52,7 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["engine"]
+packages = ["engine", "i18n"]
 exclude = [
     "tests",
     "data",

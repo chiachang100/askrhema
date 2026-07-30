@@ -77,15 +77,54 @@ class EmbeddingConfig:
             raise ValueError("model_name cannot be empty")
 
 
+@dataclass
+class LanguageConfig:
+    """Configuration for language support."""
+    default_language: str = "en"
+    available_languages: Dict[str, str] = field(default_factory=lambda: {
+        "en": "English",
+        "zh-Hans": "简体中文",
+        "zh-Hant": "繁體中文",
+    })
+    language_names: Dict[str, str] = field(default_factory=lambda: {
+        "en": "English",
+        "zh-Hans": "简体中文 (Simplified Chinese)",
+        "zh-Hant": "繁體中文 (Traditional Chinese)",
+    })
+    
+    def __post_init__(self) -> None:
+        """Validate configuration values."""
+        if self.default_language not in self.available_languages:
+            raise ValueError(f"Default language {self.default_language} not in available languages")
+
+
 # Default configuration instances
 DEFAULT_SEARCH_CONFIG = SearchConfig()
 DEFAULT_LLM_CONFIG = LLMConfig()
 DEFAULT_EMBEDDING_CONFIG = EmbeddingConfig()
+DEFAULT_LANGUAGE_CONFIG = LanguageConfig()
 
 
-def get_system_prompt() -> str:
-    """Get the default system prompt for AI exegesis."""
-    return DEFAULT_LLM_CONFIG.system_prompt
+def get_system_prompt(language: str = "en") -> str:
+    """Get the system prompt for AI exegesis in the specified language."""
+    if language == "zh-Hans":
+        return (
+            "您是TBS（退修圣经搜索），一位专业的圣经助手。"
+            "请严格根据提供的圣经经文来回答。"
+            "对于每一处经文引用，请务必注明书卷、章节和经文编号。"
+            "提供全面、学术性的解经，同时保持平易近人。"
+            "讨论神学概念时，要精确并引用经文。"
+        )
+    elif language == "zh-Hant":
+        return (
+            "您是TBS（退修聖經搜索），一位專業的聖經助手。"
+            "請嚴格根據提供的聖經經文來回答。"
+            "對於每一處經文引用，請務必註明書卷、章節和經文編號。"
+            "提供全面、學術性的解經，同時保持平易近人。"
+            "討論神學概念時，要精確並引用經文。"
+        )
+    else:
+        return DEFAULT_LLM_CONFIG.system_prompt
 
 
 def get_llm_config(provider: str) -> Dict[str, Any]:
@@ -109,9 +148,11 @@ __all__ = [
     "SearchConfig",
     "LLMConfig",
     "EmbeddingConfig",
+    "LanguageConfig",
     "DEFAULT_SEARCH_CONFIG",
     "DEFAULT_LLM_CONFIG",
     "DEFAULT_EMBEDDING_CONFIG",
+    "DEFAULT_LANGUAGE_CONFIG",
     "get_system_prompt",
     "get_llm_config",
 ]
