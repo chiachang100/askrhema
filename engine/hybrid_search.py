@@ -342,7 +342,7 @@ class HybridSearchEngine:
                 query_filter=qdrant_filter
             )
             search_results = response.points if hasattr(response, 'points') else []
-        except (AttributeError, TypeError):
+        except (AttributeError, TypeError) as e:
             try:
                 # Try older version with search
                 search_results = self._qdrant_client.search(
@@ -351,8 +351,17 @@ class HybridSearchEngine:
                     limit=top_k,
                     query_filter=qdrant_filter
                 )
-            except Exception as e:
-                raise RuntimeError(f"Qdrant search failed: {str(e)}")
+            except Exception as e2:
+                # Try with different parameter names for even older versions
+                try:
+                    search_results = self._qdrant_client.search(
+                        collection_name=self.config.collection_name,
+                        vector=query_embedding,
+                        limit=top_k,
+                        filter=qdrant_filter
+                    )
+                except Exception as e3:
+                    raise RuntimeError(f"Qdrant search failed: {str(e3)}")
         
         # Extract results
         results = []
@@ -402,6 +411,33 @@ class HybridSearchEngine:
         logger.debug(f"Sparse search returned {len(results)} results")
         return results
     
+    def _apply_filters_to_results(self, results: List[SearchResult], 
+                                   book: Optional[str] = None, 
+                                   testament: Optional[str] = None) -> List[SearchResult]:
+        """
+        Apply filters to search results (post-filtering for sparse search).
+        
+        Args:
+            results: List of SearchResult objects
+            book: Filter by book name
+            testament: Filter by testament (OT or NT)
+            
+        Returns:
+            Filtered list of SearchResult objects
+        """
+        if not book and not testament:
+            return results
+        
+        filtered_results = []
+        for result in results:
+            if book and result.book != book:
+                continue
+            if testament and result.testament != testament:
+                continue
+            filtered_results.append(result)
+        
+        return filtered_results
+    
     def search(self, query: str, top_k: Optional[int] = None,
                book: Optional[str] = None,
                testament: Optional[str] = None) -> List[SearchResult]:
@@ -426,13 +462,13 @@ class HybridSearchEngine:
         top_k = top_k or self.config.top_k
         k_constant = self.config.rrf_k_constant
         
-        logger.info(f"Searching for: '{query}' with top_k={top_k}")
+        logger.info(f"Searching for: '{query}' with top_k={top_k}, book={book}, testament={testament}")
         
-        # Perform dense search
-        dense_results = self._perform_dense_search(query, top_k * 2, book, testament)
+        # Perform dense search (with filters applied at Qdrant level)
+        dense_results = self._perform_dense_search(query, top_k * 3, book, testament)
         
-        # Perform sparse search
-        sparse_results = self._perform_sparse_search(query, top_k * 2)
+        # Perform sparse search (without filters, then apply post-filtering)
+        sparse_results = self._perform_sparse_search(query, top_k * 3)
         
         # Combine results using RRF
         all_verse_ids: Set[int] = set()
@@ -471,7 +507,7 @@ class HybridSearchEngine:
             rrf_scores[verse_id] = rrf_score
         
         # Sort by RRF score
-        sorted_verse_ids = sorted(rrf_scores.items(), key=lambda x: x[1], reverse=True)[:top_k]
+        sorted_verse_ids = sorted(rrf_scores.items(), key=lambda x: x[1], reverse=True)[:top_k * 2]
         
         # Create SearchResult objects
         verse_lookup = {v["id"]: v for v in self._verses}
@@ -499,6 +535,13 @@ class HybridSearchEngine:
                 dense_rank=dense_ranks[verse_id],
                 sparse_rank=sparse_ranks[verse_id]
             ))
+        
+        # Apply post-filtering for sparse search results
+        if book or testament:
+            results = self._apply_filters_to_results(results, book, testament)
+        
+        # Limit to top_k
+        results = results[:top_k]
         
         logger.info(f"Search returned {len(results)} results")
         return results
