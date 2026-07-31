@@ -35,8 +35,9 @@ logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.StreamHandler(sys.stdout),
-        logging.FileHandler('seekrhema_debug.log')  # Also log to file
+        #logging.StreamHandler(sys.stdout),
+        logging.StreamHandler(),
+        logging.FileHandler('seekrhema_debug.log', encoding="utf-8")  # Also log to file
     ]
 )
 logger = logging.getLogger(__name__)

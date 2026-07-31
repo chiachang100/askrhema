@@ -3,7 +3,12 @@
 from dataclasses import dataclass, field
 from typing import Optional, Dict, Any
 import os
+import logging
+from pathlib import Path
 
+# Initialize module-level logger for config
+logger = logging.getLogger(__name__)
+logger.info("Config module initialized successfully.")
 
 @dataclass
 class SearchConfig:
@@ -35,6 +40,7 @@ class LLMConfig:
         "Provide thorough, scholarly exegesis while remaining accessible to lay readers. "
         "When discussing theological concepts, be precise and reference scripture."
     )
+
     temperature: float = 0.7
     max_tokens: int = 1000
     ollama_url: str = "http://localhost:11434/api/generate"
@@ -104,9 +110,28 @@ DEFAULT_LLM_CONFIG = LLMConfig()
 DEFAULT_EMBEDDING_CONFIG = EmbeddingConfig()
 DEFAULT_LANGUAGE_CONFIG = LanguageConfig()
 
+def get_system_prompt(language: str) -> str:
+    logger.info(f"[config] Fetching system prompt for language: {language}")
+    
+    SYSTEM_PROMPTS = {
+        "en": "You are SeekRhema, an expert, reverent, and scholarly biblical assistant. Ground your answer strictly in the provided Bible passages.",
+        "zh-TW": "你是 SeekRhema，一位專業、敬虔且具備學者素養的聖經解經助手。請嚴格根據以下提供的聖經經文回答問題。",
+        "zh-CN": "你是 SeekRhema，一位专业、敬虔且具备学者素养的圣经解经助手。请严格根据以下提供的圣经经文回答问题。"
+    }
 
-def get_system_prompt(language: str = "en") -> str:
-    """Get the system prompt for AI exegesis in the specified language."""
+    ai_prompt = SYSTEM_PROMPTS["en"]
+
+    if language in ["zh-TW", "zh-Hant"]:
+        ai_prompt = SYSTEM_PROMPTS["zh-TW"]
+    elif language in ["zh-CN", "zh-Hans", "zh"]:
+        ai_prompt=  SYSTEM_PROMPTS["zh-CN"]
+
+    logger.info(f"[config] Fetched system prompt: [{ai_prompt}].")
+
+    return ai_prompt
+
+def v1_get_system_prompt(language: str = "en") -> str:
+    "Get the system prompt for AI exegesis in the specified language."
     if language == "zh-Hans":
         return (
             "您是SeekRhema，一位专业的圣经助手。"
@@ -125,7 +150,6 @@ def get_system_prompt(language: str = "en") -> str:
         )
     else:
         return DEFAULT_LLM_CONFIG.system_prompt
-
 
 def get_llm_config(provider: str) -> Dict[str, Any]:
     """Get LLM configuration for a specific provider."""

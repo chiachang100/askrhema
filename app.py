@@ -2,12 +2,25 @@
 
 import json
 import os
+import logging
 from pathlib import Path
 from typing import Optional, List, Dict, Any, Generator
+
+# Configure logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        #logging.StreamHandler(sys.stdout),
+        logging.StreamHandler(),
+        logging.FileHandler('seekrhema_debug.log', encoding="utf-8")  # Also log to file
+    ],
+    force=True
+)
+
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-import logging
 
 from config import (
     DEFAULT_SEARCH_CONFIG, 
@@ -126,6 +139,38 @@ st.markdown("""
             color: #94a3b8 !important; /* Slate light gray for dark mode */
             border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
         }
+        
+        .search-stats {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        }
+
+        .stat-item {
+            color: #cbd5e1 !important;
+        }
+
+        .stat-item .stat-value {
+            color: #f6d365 !important; /* Gold highlight in dark mode */
+        }
+        
+        /* Fix score badges in Dark Mode */
+        .score-badge {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: #e2e8f0 !important; /* Crisp light gray text */
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .score-badge.high {
+            background-color: rgba(40, 167, 69, 0.25) !important;
+            color: #81c784 !important; /* Soft green */
+            border: 1px solid rgba(129, 199, 132, 0.3) !important;
+        }
+
+        .score-badge.medium {
+            background-color: rgba(255, 193, 7, 0.2) !important;
+            color: #ffe082 !important; /* Soft yellow/gold */
+            border: 1px solid rgba(255, 224, 130, 0.3) !important;
+        }
     }
 
     /* -------------------------------------------------------------
@@ -168,15 +213,18 @@ st.markdown("""
         gap: 0.5rem;
         align-items: center;
     }
+
     .score-badge {
         display: inline-block;
         background-color: rgba(108, 117, 125, 0.15);
         padding: 0.2rem 0.7rem;
         border-radius: 20px;
         font-size: 0.75rem;
-        color: var(--text-color, #495057);
+        color: #2c3e50; /* Hardcoded dark slate color for light backgrounds */
         font-weight: 500;
+        border: 1px solid rgba(108, 117, 125, 0.2);
     }
+
     .score-badge.high {
         background-color: #d4edda;
         color: #155724;
@@ -236,8 +284,9 @@ st.markdown("""
         color: #1e3a5f;
         margin-bottom: 1rem;
     }
-    .search-stats {
-        background: #f8f9fa;
+
+.search-stats {
+        background: var(--secondary-background-color, #f8f9fa);
         padding: 0.75rem 1rem;
         border-radius: 8px;
         margin-bottom: 1rem;
@@ -245,6 +294,7 @@ st.markdown("""
         flex-wrap: wrap;
         gap: 0.5rem;
         align-items: center;
+        border: 1px solid rgba(108, 117, 125, 0.15);
     }
     .stat-item {
         display: flex;
@@ -253,7 +303,11 @@ st.markdown("""
         color: var(--text-color, #495057);
         font-size: 0.9rem;
     }
-
+    .stat-item .stat-value {
+        font-weight: 600;
+        color: var(--primary-color, #1e3a5f);
+    }
+    
     /* Standard Footer Styling */
     .footer {
         margin-top: 3rem;
@@ -355,6 +409,8 @@ def display_sidebar() -> tuple[str, str, str, bool, int, Optional[str], Optional
         st.session_state.language = language
         # Reload translations for the new language
         translations.set_language(language)
+    
+    logger.info(f"[display_sidebar]: language={language}")
     
     st.sidebar.divider()
     
@@ -526,8 +582,140 @@ def display_verse_card(result: SearchResult, index: int) -> None:
         </div>
         """, unsafe_allow_html=True)
 
+def build_exegetical_prompt(query: str, context_verses: List[Dict[str, Any]], language: str) -> str:
+    """Build a language-specific user prompt for the LLM."""
+    verses_text = "\n".join([
+        f"- {v['book']} {v['chapter']}:{v['verse']}: {v['text']}" 
+        for v in context_verses
+    ])
+
+    logger.info(f"[build_exegetical_prompt]: language={language}")
+
+    if language in ["zh-TW", "zh-Hant"]:
+        return f"""請根據查詢「{query}」檢索出的以下聖經經文，提供嚴謹且詳細的釋經分析：
+
+【上下文經文】：
+{verses_text}
+
+請按以下結構組織您的回答：
+
+1. **摘要**：簡要說明經文與查詢的關聯
+2. **神學主題**：經文中展現的核心神學教義與概念
+3. **歷史背景**：相關的歷史或文化背景
+4. **實際應用**：如何在現代基督徒生活中回應與應用
+5. **關聯經文**：這些經文與其他相關聖經章節的互聯關係
+
+請使用繁體中文（台灣習慣用語）回答。請用清晰的部分組織您的回答，提供適當的引用，保持學術性但易於理解的語氣。確保所有見解均以提供的經文為依據，並標註相應的經文出處。"""
+
+    elif language in ["zh-CN", "zh-Hans", "zh"]:
+        return f"""请根据查询“{query}”检索出的以下圣经经文，提供严谨且详细的释经分析：
+
+【上下文经文】：
+{verses_text}
+
+请按以下结构组织您的回答：
+
+1. **摘要**：简要说明经文与查询的关联
+2. **神学主题**：经文中展现的核心神学教义与概念
+3. **历史背景**：相关的历史或文化背景
+4. **实际应用**：如何在现代基督徒生活中回应与应用
+5. **关联经文**：这些经文与其他相关圣经章节的互联关系
+
+请使用简体中文回答。请用清晰的部分组织您的回答，提供适当的引用，保持学术性但易于理解的语气。确保所有见解均以提供的经文为依据，并标注相应的经文出处。"""
+
+    else:
+        return f"""Please provide a thorough exegetical analysis of the following Bible passages found for the query: "{query}"
+
+Context Passages:
+{verses_text}
+
+Please structure your response as follows:
+
+1. **Summary**: Brief overview of the passages and their connection to the query
+2. **Theological Themes**: Key theological concepts and doctrines present in these passages
+3. **Historical Context**: Important historical or cultural background
+4. **Practical Application**: How these passages apply to modern Christian living
+5. **Connections**: Interconnections between these passages and other related scriptures
+
+Format your response with clear sections, proper citations, and maintain a scholarly yet accessible tone.
+Be thorough but concise. Ground all insights in the provided scripture passages."""
 
 def generate_ai_response(
+    provider: str,
+    model: str,
+    query: str,
+    api_key: Optional[str],
+    results: List[SearchResult],
+    system_prompt: str,
+    language: str = "en"
+) -> None:
+    """Generate and stream AI response based on search results."""
+    t = translations
+    
+    if not results:
+        st.warning(t.get("ui.results.no_results"))
+        return
+    
+    logger.info(f"[generate_ai_response]: language={language}")
+
+    # Prepare context from search results
+    context_verses = [
+        {
+            "book": r.book,
+            "chapter": r.chapter,
+            "verse": r.verse,
+            "text": r.text
+        }
+        for r in results[:5]
+    ]
+    
+    # Build prompt dynamically using the language selector
+    prompt = build_exegetical_prompt(query, context_verses, language)
+
+    # Stream the response
+    response_container = st.empty()
+    full_response = ""
+    
+    try:
+        with st.spinner(t.get("ui.ai.generating")):
+            response_container.markdown(f"""
+            <div class="ai-response">
+                <h4>{t.get("ui.ai.exegesis")} <span style="display:inline-block;animation:spin 1s linear infinite;">⏳</span></h4>
+                <p><em>{t.get("ui.ai.generating")}</em></p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Fetch system prompt based on language
+            lang_system_prompt = get_system_prompt(language)
+            
+            for chunk in stream_llm_response(
+                provider=provider,
+                model_name=model,
+                prompt=prompt,
+                system_prompt=lang_system_prompt,
+                api_key=api_key,
+                context_verses=context_verses,
+                temperature=0.3,  # Lower temperature keeps exegesis factual and grounded
+                max_tokens=1500
+            ):
+                full_response += chunk
+                response_container.markdown(f"""
+                <div class="ai-response">
+                    <h4>{t.get("ui.ai.exegesis")}</h4>
+                    <div style="margin-top: 1rem; line-height: 1.8;">
+                        {full_response}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+    except LLMProviderError as e:
+        st.error(f"{t.get('ui.ai.provider_error')}: {str(e)}")
+        response_container.empty()
+    except Exception as e:
+        st.error(f"{t.get('ui.ai.error')}: {str(e)}")
+        response_container.empty()
+
+def v1_generate_ai_response(
     provider: str,
     model: str,
     query: str,
@@ -640,6 +828,9 @@ def handle_search(
     fast_mode: bool
 ) -> List[SearchResult]:
     """Execute the search with error handling."""
+    logger.info(f"Search started: query='{query}', top_k={top_k}")
+    logger.debug(f"Filters: book={book_filter}, testament={testament_filter}")
+
     try:
         # Prepare filters
         book = book_filter if book_filter != "All" else None
@@ -666,6 +857,8 @@ def handle_search(
         st.session_state.last_search_time = datetime.now().strftime("%H:%M:%S")
         st.session_state.error_message = None
         
+        logger.info(f"Search completed: found {len(results)} results")
+
         return results
         
     except Exception as e:
@@ -683,6 +876,8 @@ def main() -> None:
     current_lang = st.session_state.get("language", "en")
     translations.set_language(current_lang)
     
+    logger.info(f"[main]: language={current_lang}")
+
     # Load Bible data
     data_path = Path(__file__).parent / "data" / "sample_bible.json"
     try:

@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "seekrhema"
-version = "0.2.2"
+version = "0.2.3"
 description = "SeekRhema - Hybrid Bible Search with AI Exegesis"
 readme = "README.md"
 requires-python = ">=3.14"
