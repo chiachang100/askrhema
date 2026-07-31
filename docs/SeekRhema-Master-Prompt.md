@@ -1,7 +1,7 @@
-MASTER PROMPT: TBS (Tuixiu Bible Search) [Python 3.14+ & Native uv Project Setup]
-You are an expert Principal AI Software Engineer. You are tasked with writing the complete, production-ready codebase for "TBS" (Tuixiu Bible Search), a hybrid, local-first Bible search and exegesis tool built with Python 3.14+, Streamlit, Qdrant, BM25, Ollama, and Cloud LLM fallbacks (Google Gemini and OpenAI).
+MASTER PROMPT: SeekRhema [Python 3.14+ & Native uv Project Setup]
+You are an expert Principal AI Software Engineer. You are tasked with writing the complete, production-ready codebase for SeekRheSeekRhema-first Bible search and exegesis tool built with Python 3.14+, Streamlit, Qdrant, BM25, Ollama, and Cloud LLM fallbacks (Google Gemini and OpenAI).
 
-All project setup, dependency management, environment isolation, and execution MUST strictly use uv and standard pyproject.toml. Do NOT use or generate a requirements.txt file. The project directory and distribution package name MUST be tuixiu-bible-search.
+All project setup, dependency management, environment isolation, and execution MUST strictly use uv and standard pyproject.toml. Do NOT use or generate a requirements.txt file. The project directory and distribution package name MUST be seekrhema.
 
 You must write ALL code files completely—do not use placeholders like # TODO: implement rest or ....
 
@@ -30,9 +30,9 @@ OpenAI: openai v1.x+ client (from openai import OpenAI using model gpt-4o-mini)
 Execute project initialization, Python version pinning, dependency installation, and application execution strictly using uv:
 
 bash
-# 1. Initialize project directory named tuixiu-bible-search
-uv init tuixiu-bible-search --app
-cd tuixiu-bible-search
+# 1. Initialize project directory named seekrhema
+uv init seekrhema --app
+cd seekrhema
 
 # 2. Pin Python version to 3.14
 uv python pin 3.14
@@ -83,7 +83,7 @@ uv sync --upgrade
 Generate complete source code for every file in the following structure:
 
 text
-tuixiu-bible-search/
+seekrhema/
 ├── pyproject.toml           # Native uv dependency manifest (PEP 621) targeting Python 3.14+
 ├── uv.lock                  # Auto-generated lockfile
 ├── README.md                # Execution guide using `uv run`
@@ -98,7 +98,7 @@ tuixiu-bible-search/
     └── llm_provider.py      # Stream generator for Ollama, Google GenAI, and OpenAI
 4. DETAILED SPECIFICATION PER FILE
 File 1: pyproject.toml
-Project name: "tuixiu-bible-search"
+Project name: "seekrhema"
 
 Must specify requires-python = ">=3.14"
 
@@ -135,7 +135,7 @@ EmbeddingConfig: Embedding model settings (model_name, device, batch_size)
 Store default system prompts for the AI exegesis engine:
 
 text
-"You are TBS (Tuixiu Bible Search), an expert biblical assistant. Ground your answer strictly in the provided Bible passages. Always cite the Book, Chapter, and Verse for every passage reference."
+"You are SeekRhema, an expert biblical assistant. Ground your answer strictly in the provided Bible passages. Always cite the Book, Chapter, and Verse for every passage reference."
 File 4: engine/indexer.py
 Function load_bible_data(file_path: str) -> list[dict] to parse and validate the JSON data
 
@@ -241,7 +241,7 @@ Toggle for AI Mode
 
 Main Screen:
 
-Header for TBS — Tuixiu Bible Search
+Header for SeekRhema
 
 Search input box with search button
 
@@ -268,7 +268,7 @@ Troubleshooting common issues
 
 Development notes
 
-5. ADDITIONAL REQUIREMENTS
+1. ADDITIONAL REQUIREMENTS
 Code Quality
 Use Python 3.14 type hint syntax throughout
 

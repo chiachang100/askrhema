@@ -1,4 +1,4 @@
-"""Translation management for TBS."""
+"""Translation management for SeekRhema."""
 
 import json
 from pathlib import Path
@@ -7,7 +7,7 @@ import streamlit as st
 
 
 class Translations:
-    """Manages translations for the TBS application."""
+    """Manages translations for the SeekRhema application."""
     
     _instance: Optional['Translations'] = None
     _translations: Dict[str, Dict[str, str]] = {}

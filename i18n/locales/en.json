@@ -1,9 +1,7 @@
 {
   "app": {
-    "title": "📖 TBS — Tuixiu Bible Search",
-    "subtitle": "Hybrid Bible Search with AI-Powered Exegesis",
-    "version": "v1.0.0",
-    "powered_by": "Powered by Hybrid Search & AI"
+    "title": "📖 SeekRhema",
+    "subtitle": "Hybrid Bible Search with AI Exegesis"
   },
   "ui": {
     "search": {
@@ -15,7 +13,7 @@
       "depth_help": "Number of search results to return"
     },
     "sidebar": {
-      "title": "TBS Config",
+      "title": "SeekRhema Config",
       "provider": "🤖 AI Provider",
       "provider_help": "Select the LLM provider for AI exegesis",
       "model": "🧠 Model",
@@ -30,7 +28,7 @@
       "filters": "🎯 Filters",
       "book": "📖 Book",
       "book_help": "Filter by book of the Bible",
-      "testament": "📜 Testament",
+      "testament": "📜 OT/NT Testament",
       "testament_help": "Filter by Old or New Testament",
       "ai_mode": "🤖 AI Exegesis Mode",
       "ai_mode_help": "Enable AI-powered analysis of the search results",
@@ -110,6 +108,6 @@
       "google": "Google Gemini",
       "openai": "OpenAI"
     },
-    "system_prompt": "You are TBS (Tuixiu Bible Search), an expert biblical assistant. Ground your answer strictly in the provided Bible passages. Always cite the Book, Chapter, and Verse for every passage reference."
+    "system_prompt": "You are SeekRhema (Hybrid Bible Search with AI Exegesis), an expert biblical assistant. Ground your answer strictly in the provided Bible passages. Always cite the Book, Chapter, and Verse for every passage reference."
   }
 }

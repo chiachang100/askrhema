@@ -1,4 +1,4 @@
-"""Configuration module for TBS (Tuixiu Bible Search)."""
+"""Configuration module for SeekRhema."""
 
 from dataclasses import dataclass, field
 from typing import Optional, Dict, Any
@@ -29,7 +29,7 @@ class SearchConfig:
 class LLMConfig:
     """Configuration for LLM providers."""
     system_prompt: str = (
-        "You are TBS (Tuixiu Bible Search), an expert biblical assistant. "
+        "You are SeekRhema, an expert biblical assistant. "
         "Ground your answer strictly in the provided Bible passages. "
         "Always cite the Book, Chapter, and Verse for every passage reference. "
         "Provide thorough, scholarly exegesis while remaining accessible to lay readers. "
@@ -109,7 +109,7 @@ def get_system_prompt(language: str = "en") -> str:
     """Get the system prompt for AI exegesis in the specified language."""
     if language == "zh-Hans":
         return (
-            "您是TBS（退修圣经搜索），一位专业的圣经助手。"
+            "您是SeekRhema，一位专业的圣经助手。"
             "请严格根据提供的圣经经文来回答。"
             "对于每一处经文引用，请务必注明书卷、章节和经文编号。"
             "提供全面、学术性的解经，同时保持平易近人。"
@@ -117,7 +117,7 @@ def get_system_prompt(language: str = "en") -> str:
         )
     elif language == "zh-Hant":
         return (
-            "您是TBS（退修聖經搜索），一位專業的聖經助手。"
+            "您是SeekRhema，一位專業的聖經助手。"
             "請嚴格根據提供的聖經經文來回答。"
             "對於每一處經文引用，請務必註明書卷、章節和經文編號。"
             "提供全面、學術性的解經，同時保持平易近人。"

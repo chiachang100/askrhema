@@ -1,4 +1,4 @@
-# How to debug TBS's Streamlit app and view logs:
+# How to debug SeekRhema's Streamlit app and view logs:
 
 ## 1. Streamlit Built-in Debugging Options
 
@@ -36,7 +36,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler('tbs_debug.log')  # Also log to file
+        logging.FileHandler('seekrhema_debug.log')  # Also log to file
     ]
 )
 logger = logging.getLogger(__name__)
@@ -60,13 +60,13 @@ def handle_search(...):
 
 ```python
 # debug_config.py
-"""Debug configuration for TBS."""
+"""Debug configuration for SeekRhema."""
 
 import logging
 import os
 from typing import Optional
 
-def setup_debug_logging(level: str = "DEBUG", log_file: Optional[str] = "tbs_debug.log"):
+def setup_debug_logging(level: str = "DEBUG", log_file: Optional[str] = "seekrhema_debug.log"):
     """Setup logging configuration."""
     log_level = getattr(logging, level.upper(), logging.DEBUG)
     
@@ -104,7 +104,7 @@ def setup_debug_logging(level: str = "DEBUG", log_file: Optional[str] = "tbs_deb
     return root_logger
 
 # Enable debug mode via environment variable
-DEBUG_MODE = os.getenv("TBS_DEBUG", "false").lower() == "true"
+DEBUG_MODE = os.getenv("SEEKRHEMA_DEBUG", "false").lower() == "true"
 
 if DEBUG_MODE:
     setup_debug_logging("DEBUG")
@@ -171,7 +171,7 @@ def handle_search(...):
 ## 6. Create a Debug Helper Function
 ```python
 # debug_utils.py
-"""Debug utilities for TBS."""
+"""Debug utilities for SeekRhema."""
 
 import logging
 import time
@@ -208,19 +208,19 @@ def search_function(query):
 - On Windows (PowerShell):
 ```powershell
 # View logs in real-time
-Get-Content tbs_debug.log -Wait
+Get-Content seekrhema_debug.log -Wait
 
 # Or using tail (if installed)
-tail -f tbs_debug.log
+tail -f seekrhema_debug.log
 ```
 
 - On Linux/Mac:
 ```bash
 # View logs in real-time
-tail -f tbs_debug.log
+tail -f seekrhema_debug.log
 
 # Or with color
-tail -f tbs_debug.log | grep --color=auto -E "ERROR|WARNING|INFO|DEBUG"
+tail -f seekrhema_debug.log | grep --color=auto -E "ERROR|WARNING|INFO|DEBUG"
 ```
 
 ## 8. Complete Debug Configuration Setup
@@ -229,9 +229,9 @@ tail -f tbs_debug.log | grep --color=auto -E "ERROR|WARNING|INFO|DEBUG"
 
 ```bash
 # .env
-TBS_DEBUG=true
-TBS_LOG_LEVEL=DEBUG
-TBS_LOG_FILE=tbs_debug.log
+SEEKRHEMA_DEBUG=true
+SEEKRHEMA_LOG_LEVEL=DEBUG
+SEEKRHEMA_LOG_FILE=seekrhema_debug.log
 ```
 
 Then in your code:
@@ -243,9 +243,9 @@ from dotenv import load_dotenv
 
 load_dotenv()  # Load .env file
 
-DEBUG_MODE = os.getenv("TBS_DEBUG", "false").lower() == "true"
-LOG_LEVEL = os.getenv("TBS_LOG_LEVEL", "INFO")
-LOG_FILE = os.getenv("TBS_LOG_FILE", "tbs_debug.log")
+DEBUG_MODE = os.getenv("SEEKRHEMA_DEBUG", "false").lower() == "true"
+LOG_LEVEL = os.getenv("SEEKRHEMA_LOG_LEVEL", "INFO")
+LOG_FILE = os.getenv("SEEKRHEMA_LOG_FILE", "seekrhema_debug.log")
 ```
 
 ## 9. Quick Debugging Commands
@@ -304,8 +304,8 @@ logger.debug(f"Search parameters: {locals()}")
 5. Check the log file for persistent issues:
 
 ```bash
-tail -f tbs_debug.log
+tail -f seekrhema_debug.log
 ```
 
-This setup gives you comprehensive debugging capabilities for your TBS application!
+This setup gives you comprehensive debugging capabilities for your SeekRhema application!
 ---

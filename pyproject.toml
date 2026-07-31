@@ -4,13 +4,13 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "tuixiu-bible-search"
-version = "0.2.0"
-description = "TBS (Tuixiu Bible Search) - A hybrid, local-first Bible search and exegesis tool"
+name = "seekrhema"
+version = "0.2.2"
+description = "SeekRhema - Hybrid Bible Search with AI Exegesis"
 readme = "README.md"
 requires-python = ">=3.14"
 authors = [
-    {name = "TBS Team", email = "tbs@example.com"}
+    {name = "SeekRhema Team", email = "seekrhema@example.com"}
 ]
 license = {text = "MIT OR Apache-2.0"}
 classifiers = [

@@ -1,4 +1,4 @@
-"""Main Streamlit UI application for TBS (Tuixiu Bible Search)."""
+"""Main Streamlit UI application for SeekRhema."""
 
 import json
 import os
@@ -26,13 +26,27 @@ from engine import (
     LLMProviderError
 )
 from i18n import get_translations
+import importlib.metadata
+
+@st.cache_data
+def get_app_version() -> str:
+    """Retrieve package version dynamically from pyproject.toml / installed package."""
+    try:
+        # Uses your package name defined in pyproject.toml
+        return f"v{importlib.metadata.version('seekrhema')}"
+    except importlib.metadata.PackageNotFoundError:
+        # Fallback if package is running unpackaged during initial dev
+        return "v0.1.0"
+
+# Get dynamic version
+app_version = get_app_version()
 
 # Setup logging
 logger = logging.getLogger(__name__)
 
 # Page configuration
 st.set_page_config(
-    page_title="TBS - Tuixiu Bible Search",
+    page_title="SeekRhema",
     page_icon="📖",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -44,21 +58,79 @@ translations = get_translations()
 # Custom CSS (keep your existing CSS, but I'll add language-specific adjustments)
 st.markdown("""
     <style>
+/* -------------------------------------------------------------
+       MAIN HEADER & SUB-HEADER (Theme-Adaptive)
+    ------------------------------------------------------------- */
     .main-header {
         font-size: 2.5rem;
         font-weight: 700;
-        color: #1e3a5f;
         margin-bottom: 0.5rem;
+        
+        /* Light Mode Gradient (Dark Navy) */
         background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
+
     .sub-header {
-        font-size: 1.1rem;
-        color: #6c757d;
+        font-size: 1.15rem;
+        font-weight: 500;
+        color: var(--text-color, #4a5568); /* Uses Streamlit theme color */
+        opacity: 0.9;
         margin-bottom: 2rem;
     }
+
+    /* -------------------------------------------------------------
+       DARK MODE OVERRIDES (Triggers when Streamlit/Browser is Dark)
+    ------------------------------------------------------------- */
+    @media (prefers-color-scheme: dark) {
+        .main-header {
+            /* Bright Gold/Sky-Blue Gradient for Dark Mode Visibility */
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+        }
+
+        .sub-header {
+            color: #cbd5e1 !important; /* Soft light gray for high dark-mode contrast */
+            opacity: 1 !important;
+        }
+
+        .sidebar-title, .ai-response h4 {
+            color: #f6d365 !important;
+        }
+
+        .verse-card {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border-left: 5px solid #f6d365 !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
+        }
+
+        .verse-reference {
+            color: #90caf9 !important;
+        }
+
+        .verse-text {
+            color: #e2e8f0 !important;
+        }
+
+        .search-stats, .example-chip {
+            background: rgba(255, 255, 255, 0.08) !important;
+            color: #e2e8f0 !important;
+            border-color: rgba(255, 255, 255, 0.15) !important;
+        }
+
+        .footer {
+            color: #94a3b8 !important; /* Slate light gray for dark mode */
+            border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+    }
+
+    /* -------------------------------------------------------------
+       CARDS & UI COMPONENTS
+    ------------------------------------------------------------- */
     .verse-card {
         background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
         border-radius: 12px;
@@ -98,11 +170,11 @@ st.markdown("""
     }
     .score-badge {
         display: inline-block;
-        background-color: #e9ecef;
+        background-color: rgba(108, 117, 125, 0.15);
         padding: 0.2rem 0.7rem;
         border-radius: 20px;
         font-size: 0.75rem;
-        color: #495057;
+        color: var(--text-color, #495057);
         font-weight: 500;
     }
     .score-badge.high {
@@ -138,7 +210,7 @@ st.markdown("""
         color: #854d00;
     }
     .ai-response {
-        background: linear-gradient(135deg, #e8f4f8 0%, #d4e8f0 100%);
+        background: rgba(0, 123, 255, 0.08);
         border-radius: 12px;
         padding: 1.5rem;
         margin-top: 1.5rem;
@@ -178,21 +250,20 @@ st.markdown("""
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        color: #495057;
+        color: var(--text-color, #495057);
         font-size: 0.9rem;
     }
-    .stat-item .stat-value {
-        font-weight: 600;
-        color: #1e3a5f;
-    }
+
+    /* Standard Footer Styling */
     .footer {
         margin-top: 3rem;
         padding: 1rem;
         text-align: center;
-        color: #6c757d;
+        color: var(--text-color, #6c757d);
         font-size: 0.85rem;
-        border-top: 1px solid #e9ecef;
+        border-top: 1px solid rgba(108, 117, 125, 0.2);
     }
+
     .example-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -215,23 +286,8 @@ st.markdown("""
         transform: translateY(-2px);
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    .success-message {
-        background-color: #d4edda;
-        color: #155724;
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
-        border-left: 4px solid #28a745;
-    }
-    .error-message {
-        background-color: #f8d7da;
-        color: #721c24;
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
-        border-left: 4px solid #dc3545;
-    }
     </style>
 """, unsafe_allow_html=True)
-
 
 def initialize_session_state() -> None:
     """Initialize Streamlit session state variables."""
@@ -395,6 +451,15 @@ def display_sidebar() -> tuple[str, str, str, bool, int, Optional[str], Optional
     # Filters
     st.sidebar.subheader(t.get("ui.sidebar.filters"))
     
+    testament_options = ["All", "OT", "NT"]
+    testament_filter = st.sidebar.selectbox(
+        label=t.get("ui.sidebar.testament"),
+        options=testament_options,
+        format_func=lambda x: t.get(f"bible.testaments.{x.lower()}", x) if x != "All" else t.get("bible.testaments.all"),
+        help=t.get("ui.sidebar.testament_help"),
+        key="testament_filter_select"
+    )
+        
     books = ["All"] + ["Genesis", "Psalms", "Isaiah", "Matthew", "John", "Romans"]
     book_display = [t.get("bible.books.all")] + [
         t.get(f"bible.books.{book.lower()}", book) for book in books[1:]
@@ -407,16 +472,7 @@ def display_sidebar() -> tuple[str, str, str, bool, int, Optional[str], Optional
         help=t.get("ui.sidebar.book_help"),
         key="book_filter_select"
     )
-    
-    testament_options = ["All", "OT", "NT"]
-    testament_filter = st.sidebar.selectbox(
-        label=t.get("ui.sidebar.testament"),
-        options=testament_options,
-        format_func=lambda x: t.get(f"bible.testaments.{x.lower()}", x) if x != "All" else t.get("bible.testaments.all"),
-        help=t.get("ui.sidebar.testament_help"),
-        key="testament_filter_select"
-    )
-    
+
     st.sidebar.divider()
     
     # AI Mode toggle
@@ -778,11 +834,11 @@ def main() -> None:
         """, unsafe_allow_html=True)
     
     # Footer
+    # &nbsp;•&nbsp; {t.get('app.powered_by')}
     st.divider()
     st.markdown(f"""
     <div class="footer">
-        <strong>{t.get('app.title')}</strong> {t.get('app.version')}
-        &nbsp;•&nbsp; {t.get('app.powered_by')}
+        <strong>{t.get('app.title')}</strong> {app_version}
         &nbsp;•&nbsp; {datetime.now().strftime('%Y')}
     </div>
     """, unsafe_allow_html=True)

@@ -1,9 +1,7 @@
 {
   "app": {
-    "title": "📖 TBS — 退修圣经搜索",
-    "subtitle": "混合式圣经搜索与AI解经",
-    "version": "v1.0.0",
-    "powered_by": "由混合搜索与AI驱动"
+    "title": "📖 SeekRhema",
+    "subtitle": "融合精准检索与 AI 深度释经"
   },
   "ui": {
     "search": {
@@ -15,7 +13,7 @@
       "depth_help": "返回的搜索结果数量"
     },
     "sidebar": {
-      "title": "TBS 配置",
+      "title": "SeekRhema 配置",
       "provider": "🤖 AI 提供商",
       "provider_help": "选择AI解经的LLM提供商",
       "model": "🧠 模型",
@@ -30,7 +28,7 @@
       "filters": "🎯 筛选器",
       "book": "📖 书卷",
       "book_help": "按圣经书卷筛选",
-      "testament": "📜 约书",
+      "testament": "📜 新旧约书",
       "testament_help": "按旧约或新约筛选",
       "ai_mode": "🤖 AI 解经模式",
       "ai_mode_help": "启用AI驱动的搜索结果分析",
@@ -110,6 +108,6 @@
       "google": "Google Gemini",
       "openai": "OpenAI"
     },
-    "system_prompt": "您是TBS（退修圣经搜索），一位专业的圣经助手。请严格根据提供的圣经经文来回答。对于每一处经文引用，请务必注明书卷、章节和经文编号。"
+    "system_prompt": "您是SeekRhema（融合精准检索与 AI 深度释经），一位专业的圣经助手。请严格根据提供的圣经经文来回答。对于每一处经文引用，请务必注明书卷、章节和经文编号。"
   }
 }

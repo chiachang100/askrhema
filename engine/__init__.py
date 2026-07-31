@@ -1,4 +1,4 @@
-"""Engine module for TBS - contains search and LLM functionality."""
+"""Engine module for SeekRhema - contains search and LLM functionality."""
 
 from engine.indexer import load_bible_data, get_verse_reference, validate_verse
 from engine.hybrid_search import HybridSearchEngine, SearchResult
