@@ -1,4 +1,4 @@
-"""Main Streamlit UI application for SeekRhema."""
+"""Main Streamlit UI application for AskRhema."""
 
 import json
 import os
@@ -13,7 +13,7 @@ logging.basicConfig(
     handlers=[
         #logging.StreamHandler(sys.stdout),
         logging.StreamHandler(),
-        logging.FileHandler('seekrhema_debug.log', encoding="utf-8")  # Also log to file
+        logging.FileHandler('askrhema_debug.log', encoding="utf-8")  # Also log to file
     ],
     force=True
 )
@@ -46,7 +46,7 @@ def get_app_version() -> str:
     """Retrieve package version dynamically from pyproject.toml / installed package."""
     try:
         # Uses your package name defined in pyproject.toml
-        return f"v{importlib.metadata.version('seekrhema')}"
+        return f"v{importlib.metadata.version('askrhema')}"
     except importlib.metadata.PackageNotFoundError:
         # Fallback if package is running unpackaged during initial dev
         return "v0.1.0"
@@ -59,7 +59,7 @@ logger = logging.getLogger(__name__)
 
 # Page configuration
 st.set_page_config(
-    page_title="SeekRhema",
+    page_title="AskRhema",
     page_icon="📖",
     layout="wide",
     initial_sidebar_state="expanded"

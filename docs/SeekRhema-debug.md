@@ -1,4 +1,4 @@
-# How to debug SeekRhema's Streamlit app and view logs:
+# How to debug AskRhema's Streamlit app and view logs:
 
 ## 1. Streamlit Built-in Debugging Options
 
@@ -37,7 +37,7 @@ logging.basicConfig(
     handlers=[
         #logging.StreamHandler(sys.stdout),
         logging.StreamHandler(),
-        logging.FileHandler('seekrhema_debug.log', encoding="utf-8")  # Also log to file
+        logging.FileHandler('askrhema_debug.log', encoding="utf-8")  # Also log to file
     ]
 )
 logger = logging.getLogger(__name__)
@@ -61,13 +61,13 @@ def handle_search(...):
 
 ```python
 # debug_config.py
-"""Debug configuration for SeekRhema."""
+"""Debug configuration for AskRhema."""
 
 import logging
 import os
 from typing import Optional
 
-def setup_debug_logging(level: str = "DEBUG", log_file: Optional[str] = "seekrhema_debug.log"):
+def setup_debug_logging(level: str = "DEBUG", log_file: Optional[str] = "askrhema_debug.log"):
     """Setup logging configuration."""
     log_level = getattr(logging, level.upper(), logging.DEBUG)
     
@@ -172,7 +172,7 @@ def handle_search(...):
 ## 6. Create a Debug Helper Function
 ```python
 # debug_utils.py
-"""Debug utilities for SeekRhema."""
+"""Debug utilities for AskRhema."""
 
 import logging
 import time
@@ -209,19 +209,19 @@ def search_function(query):
 - On Windows (PowerShell):
 ```powershell
 # View logs in real-time
-Get-Content seekrhema_debug.log -Wait
+Get-Content askrhema_debug.log -Wait
 
 # Or using tail (if installed)
-tail -f seekrhema_debug.log
+tail -f askrhema_debug.log
 ```
 
 - On Linux/Mac:
 ```bash
 # View logs in real-time
-tail -f seekrhema_debug.log
+tail -f askrhema_debug.log
 
 # Or with color
-tail -f seekrhema_debug.log | grep --color=auto -E "ERROR|WARNING|INFO|DEBUG"
+tail -f askrhema_debug.log | grep --color=auto -E "ERROR|WARNING|INFO|DEBUG"
 ```
 
 ## 8. Complete Debug Configuration Setup
@@ -232,7 +232,7 @@ tail -f seekrhema_debug.log | grep --color=auto -E "ERROR|WARNING|INFO|DEBUG"
 # .env
 SEEKRHEMA_DEBUG=true
 SEEKRHEMA_LOG_LEVEL=DEBUG
-SEEKRHEMA_LOG_FILE=seekrhema_debug.log
+SEEKRHEMA_LOG_FILE=askrhema_debug.log
 ```
 
 Then in your code:
@@ -246,7 +246,7 @@ load_dotenv()  # Load .env file
 
 DEBUG_MODE = os.getenv("SEEKRHEMA_DEBUG", "false").lower() == "true"
 LOG_LEVEL = os.getenv("SEEKRHEMA_LOG_LEVEL", "INFO")
-LOG_FILE = os.getenv("SEEKRHEMA_LOG_FILE", "seekrhema_debug.log")
+LOG_FILE = os.getenv("SEEKRHEMA_LOG_FILE", "askrhema_debug.log")
 ```
 
 ## 9. Quick Debugging Commands
@@ -305,8 +305,8 @@ logger.debug(f"Search parameters: {locals()}")
 5. Check the log file for persistent issues:
 
 ```bash
-tail -f seekrhema_debug.log
+tail -f askrhema_debug.log
 ```
 
-This setup gives you comprehensive debugging capabilities for your SeekRhema application!
+This setup gives you comprehensive debugging capabilities for your AskRhema application!
 ---

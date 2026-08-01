@@ -1,15 +1,15 @@
-'ll create the complete SeekRhema codebase with all the specified files and functionality. Let me start by generating each file in the required structure.
+'ll create the complete AskRhema codebase with all the specified files and functionality. Let me start by generating each file in the required structure.
 
 python
 # pyproject.toml
 [project]
-name = "seekrhema"
+name = "askrhema"
 version = "1.0.0"
-description = "SeekRhema - A hybrid, local-first Bible search and exegesis tool"
+description = "AskRhema - A hybrid, local-first Bible search and exegesis tool"
 readme = "README.md"
 requires-python = ">=3.14"
 authors = [
-    {name = "SeekRhema Team", email = "SeekRhema@example.com"}
+    {name = "AskRhema Team", email = "AskRhema@example.com"}
 ]
 license = {text = "MIT"}
 classifiers = [
@@ -182,7 +182,7 @@ python
 ]
 python
 # config.py
-"""Configuration module for SeekRhema."""
+"""Configuration module for AskRhema."""
 
 from dataclasses import dataclass, field
 from typing import Optional
@@ -210,7 +210,7 @@ class SearchConfig:
 class LLMConfig:
     """Configuration for LLM providers."""
     system_prompt: str = (
-        "You are SeekRhema, an expert biblical assistant. "
+        "You are AskRhema, an expert biblical assistant. "
         "Ground your answer strictly in the provided Bible passages. "
         "Always cite the Book, Chapter, and Verse for every passage reference."
     )
@@ -266,7 +266,7 @@ __all__ = [
 ]
 python
 # engine/__init__.py
-"""Engine module for SeekRhema - contains search and LLM functionality."""
+"""Engine module for AskRhema - contains search and LLM functionality."""
 
 from engine.indexer import load_bible_data, get_verse_reference, validate_verse
 from engine.hybrid_search import HybridSearchEngine, SearchResult
@@ -1007,7 +1007,7 @@ def _stream_openai(
         raise LLMProviderError(f"OpenAI error: {str(e)}")
 python
 # app.py
-"""Main Streamlit UI application for SeekRhema."""
+"""Main Streamlit UI application for AskRhema."""
 
 import json
 import os
@@ -1029,7 +1029,7 @@ from engine import (
 
 # Page configuration
 st.set_page_config(
-    page_title="SeekRhema",
+    page_title="AskRhema",
     page_icon="📖",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -1349,7 +1349,7 @@ def main() -> None:
     provider, model, api_key, ai_mode, top_k, book_filter, testament_filter = display_sidebar()
     
     # Main content
-    st.markdown('<div class="main-header">📖 SeekRhema</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header">📖 AskRhema</div>', unsafe_allow_html=True)
     st.caption("Hybrid Bible Search with AI Exegesis")
     st.divider()
     
@@ -1430,7 +1430,7 @@ def main() -> None:
     
     # Footer
     st.divider()
-    st.caption("SeekRhema v0.1.0 | Powered by Hybrid Search & AI")
+    st.caption("AskRhema v0.1.0 | Powered by Hybrid Search & AI")
 
 
 if __name__ == "__main__":
@@ -1438,7 +1438,7 @@ if __name__ == "__main__":
 markdown
 # README.md
 
-# SeekRhema
+# AskRhema
 
 A hybrid, local-first Bible search and exegesis tool built with Python 3.14+, Streamlit, Qdrant, BM25, and AI integration.
 
@@ -1468,12 +1468,12 @@ pip install uv
 2. Clone/Initialize Project
 bash
 # Create project directory
-uv init seekrhema --app
-cd seekrhema
+uv init askrhema --app
+cd askrhema
 
 # Copy all source files into the directory
 # Ensure the following structure:
-# seekrhema/
+# askrhema/
 # ├── app.py
 # ├── config.py
 # ├── engine/
@@ -1646,7 +1646,7 @@ Now I'll create the complete codebase with all the necessary files. Let me compi
 
 python
 # engine/__init__.py (complete)
-"""Engine module for SeekRhema - contains search and LLM functionality."""
+"""Engine module for AskRhema - contains search and LLM functionality."""
 
 from engine.indexer import load_bible_data, get_verse_reference, validate_verse, BibleDataError
 from engine.hybrid_search import HybridSearchEngine, SearchResult
@@ -1672,13 +1672,13 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "seekrhema"
+name = "askrhema"
 version = "1.0.0"
-description = "SeekRhema - A hybrid, local-first Bible search and exegesis tool"
+description = "AskRhema - A hybrid, local-first Bible search and exegesis tool"
 readme = "README.md"
 requires-python = ">=3.14"
 authors = [
-    {name = "SeekRhema Team", email = "SeekRhema@example.com"}
+    {name = "AskRhema Team", email = "AskRhema@example.com"}
 ]
 license = {text = "MIT"}
 classifiers = [
@@ -1716,9 +1716,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/chiachang100/seekrhema"
-Repository = "https://github.com/chiachang100/seekrhema"
-Issues = "https://github.com/chiachang100/seekrhema/issues"
+Homepage = "https://github.com/chiachang100/askrhema"
+Repository = "https://github.com/chiachang100/askrhema"
+Issues = "https://github.com/chiachang100/askrhema/issues"
 
 [tool.black]
 line-length = 100
@@ -1971,7 +1971,7 @@ Now let me provide a complete app.py with all the enhancements and proper sessio
 
 python
 # app.py (complete with all functionality)
-"""Main Streamlit UI application for SeekRhema."""
+"""Main Streamlit UI application for AskRhema."""
 
 import json
 import os
@@ -1996,7 +1996,7 @@ from engine import (
 
 # Page configuration
 st.set_page_config(
-    page_title="SeekRhema",
+    page_title="AskRhema",
     page_icon="📖",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -2207,7 +2207,7 @@ def get_search_engine() -> HybridSearchEngine:
 def display_sidebar() -> tuple[str, str, str, bool, int, Optional[str], Optional[str]]:
     """Display the sidebar and return configuration values."""
     st.sidebar.markdown('<div class="sidebar-logo">📖</div>', unsafe_allow_html=True)
-    st.sidebar.markdown('<div class="sidebar-title">SeekRhema Config</div>', unsafe_allow_html=True)
+    st.sidebar.markdown('<div class="sidebar-title">AskRhema Config</div>', unsafe_allow_html=True)
     st.sidebar.divider()
     
     # Provider selection
@@ -2537,7 +2537,7 @@ def main() -> None:
     # Main content
     col1, col2 = st.columns([4, 1])
     with col1:
-        st.markdown('<div class="main-header">📖 SeekRhema</div>', unsafe_allow_html=True)
+        st.markdown('<div class="main-header">📖 AskRhema</div>', unsafe_allow_html=True)
         st.markdown('<div class="sub-header">Hybrid Bible Search with AI Exegesis</div>', unsafe_allow_html=True)
     
     with col2:
@@ -2648,7 +2648,7 @@ def main() -> None:
     st.divider()
     st.markdown(f"""
     <div class="footer">
-        <strong>📖 SeekRhema</strong> v1.0.0
+        <strong>📖 AskRhema</strong> v1.0.0
         &nbsp;•&nbsp; Powered by Hybrid Search &amp; AI
         &nbsp;•&nbsp; {datetime.now().strftime('%Y')}
     </div>
@@ -2661,7 +2661,7 @@ Now let me also create a comprehensive config.py with all the configuration opti
 
 python
 # config.py (complete with all configuration classes)
-"""Configuration module for SeekRhema."""
+"""Configuration module for AskRhema."""
 
 from dataclasses import dataclass, field
 from typing import Optional, Dict, Any
@@ -2692,7 +2692,7 @@ class SearchConfig:
 class LLMConfig:
     """Configuration for LLM providers."""
     system_prompt: str = (
-        "You are SeekRhema, an expert biblical assistant. "
+        "You are AskRhema, an expert biblical assistant. "
         "Ground your answer strictly in the provided Bible passages. "
         "Always cite the Book, Chapter, and Verse for every passage reference. "
         "Provide thorough, scholarly exegesis while remaining accessible to lay readers. "
@@ -2743,7 +2743,7 @@ class EmbeddingConfig:
 @dataclass
 class UIConfig:
     """Configuration for UI elements."""
-    page_title: str = "SeekRhema"
+    page_title: str = "AskRhema"
     page_icon: str = "📖"
     layout: str = "wide"
     initial_sidebar_state: str = "expanded"
@@ -2951,7 +2951,7 @@ class TestHybridSearch:
 
 if __name__ == "__main__":
     pytest.main(["-v", __file__])
-This completes the entire SeekRhema codebase. The project includes:
+This completes the entire AskRhema codebase. The project includes:
 
 Complete project structure with all necessary files
 

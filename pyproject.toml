@@ -4,13 +4,13 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "seekrhema"
-version = "0.2.3"
-description = "SeekRhema - Hybrid Bible Search with AI Exegesis"
+name = "askrhema"
+version = "0.3.0"
+description = "AskRhema - Hybrid Bible Search with AI Exegesis"
 readme = "README.md"
 requires-python = ">=3.14"
 authors = [
-    {name = "SeekRhema Team", email = "seekrhema@example.com"}
+    {name = "AskRhema Team", email = "askrhema@example.com"}
 ]
 license = {text = "MIT OR Apache-2.0"}
 classifiers = [

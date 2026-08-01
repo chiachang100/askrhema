@@ -1,11 +1,11 @@
 # I18N Support
 
-To support multiple languages (English, Traditional Chinese, and Simplified Chinese) in SeekRhema, you'll need to implement internationalization (i18n). Here's a comprehensive solution:
+To support multiple languages (English, Traditional Chinese, and Simplified Chinese) in AskRhema, you'll need to implement internationalization (i18n). Here's a comprehensive solution:
 
 ## 1. Create Language Configuration Files
 Create i18n/ Directory Structure
 ```text
-seekrhema/
+askrhema/
 ├── i18n/
 │   ├── __init__.py
 │   ├── translations.py

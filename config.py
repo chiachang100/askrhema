@@ -1,4 +1,4 @@
-"""Configuration module for SeekRhema."""
+"""Configuration module for AskRhema."""
 
 from dataclasses import dataclass, field
 from typing import Optional, Dict, Any
@@ -34,7 +34,7 @@ class SearchConfig:
 class LLMConfig:
     """Configuration for LLM providers."""
     system_prompt: str = (
-        "You are SeekRhema, an expert biblical assistant. "
+        "You are AskRhema, an expert biblical assistant. "
         "Ground your answer strictly in the provided Bible passages. "
         "Always cite the Book, Chapter, and Verse for every passage reference. "
         "Provide thorough, scholarly exegesis while remaining accessible to lay readers. "
@@ -114,9 +114,9 @@ def get_system_prompt(language: str) -> str:
     logger.info(f"[config] Fetching system prompt for language: {language}")
     
     SYSTEM_PROMPTS = {
-        "en": "You are SeekRhema, an expert, reverent, and scholarly biblical assistant. Ground your answer strictly in the provided Bible passages.",
-        "zh-TW": "你是 SeekRhema，一位專業、敬虔且具備學者素養的聖經解經助手。請嚴格根據以下提供的聖經經文回答問題。",
-        "zh-CN": "你是 SeekRhema，一位专业、敬虔且具备学者素养的圣经解经助手。请严格根据以下提供的圣经经文回答问题。"
+        "en": "You are AskRhema, an expert, reverent, and scholarly biblical assistant. Ground your answer strictly in the provided Bible passages.",
+        "zh-TW": "你是 AskRhema，一位專業、敬虔且具備學者素養的聖經解經助手。請嚴格根據以下提供的聖經經文回答問題。",
+        "zh-CN": "你是 AskRhema，一位专业、敬虔且具备学者素养的圣经解经助手。请严格根据以下提供的圣经经文回答问题。"
     }
 
     ai_prompt = SYSTEM_PROMPTS["en"]
@@ -134,7 +134,7 @@ def v1_get_system_prompt(language: str = "en") -> str:
     "Get the system prompt for AI exegesis in the specified language."
     if language == "zh-Hans":
         return (
-            "您是SeekRhema，一位专业的圣经助手。"
+            "您是AskRhema，一位专业的圣经助手。"
             "请严格根据提供的圣经经文来回答。"
             "对于每一处经文引用，请务必注明书卷、章节和经文编号。"
             "提供全面、学术性的解经，同时保持平易近人。"
@@ -142,7 +142,7 @@ def v1_get_system_prompt(language: str = "en") -> str:
         )
     elif language == "zh-Hant":
         return (
-            "您是SeekRhema，一位專業的聖經助手。"
+            "您是AskRhema，一位專業的聖經助手。"
             "請嚴格根據提供的聖經經文來回答。"
             "對於每一處經文引用，請務必註明書卷、章節和經文編號。"
             "提供全面、學術性的解經，同時保持平易近人。"

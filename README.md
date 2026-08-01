@@ -1,4 +1,4 @@
-# SeekRhema - Hybrid Bible Search with AI Exegesis
+# AskRhema - Hybrid Bible Search with AI Exegesis
 
 A hybrid, local-first Bible search and exegesis tool built with Python, Streamlit, Qdrant, BM25, and AI integration.
 
@@ -43,12 +43,12 @@ pip install uv
 ### 2. Clone/Initialize Project
 ```bash
 # Create project directory
-uv init seekrhema --app
-cd seekrhema
+uv init askrhema --app
+cd askrhema
 
 # Copy all source files into the directory
 # Ensure the following structure:
-# seekrhema/
+# askrhema/
 # ├── app.py
 # ├── config.py
 # ├── engine/

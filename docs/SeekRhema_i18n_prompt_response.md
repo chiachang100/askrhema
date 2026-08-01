@@ -1,6 +1,6 @@
-# SeekRhema i18n Prompt and Response
+# AskRhema i18n Prompt and Response
 
-To support multi-language prompts and responses for English, Traditional Chinese (zh-TW), and Simplified Chinese (zh-CN) in SeekRhema, you need to align three layers:
+To support multi-language prompts and responses for English, Traditional Chinese (zh-TW), and Simplified Chinese (zh-CN) in AskRhema, you need to align three layers:
 
 - Translation Infrastructure (`i18n.py`) — Storing UI strings and prompts.
 - System Prompts (`config.py`) — Guiding the LLM to respond in the selected language.
@@ -13,15 +13,15 @@ Python
 # config.py
 
 SYSTEM_PROMPTS = {
-    "en": """You are SeekRhema, an expert, reverent, and scholarly biblical assistant.
+    "en": """You are AskRhema, an expert, reverent, and scholarly biblical assistant.
 Ground your answer strictly in the provided Bible passages. Always cite the exact Book, Chapter, and Verse numbers.
 Respond in clear, accessible English.""",
 
-    "zh-TW": """你是 SeekRhema，一位專業、敬虔且具備學者素養的聖經解經助手。
+    "zh-TW": """你是 AskRhema，一位專業、敬虔且具備學者素養的聖經解經助手。
 請嚴格根據以下提供的聖經經文回答問題。每次引用經文時，必須明確標註書卷、章節與節數。
 請使用繁體中文（台灣習慣用語）進行回答。""",
 
-    "zh-CN": """你是 SeekRhema，一位专业、敬虔且具备学者素养的圣经解经助手。
+    "zh-CN": """你是 AskRhema，一位专业、敬虔且具备学者素养的圣经解经助手。
 请严格根据以下提供的圣经经文回答问题。每次引用经文时，必须明确标注书卷、章节与节数。
 请使用简体中文进行回答。"""
 }

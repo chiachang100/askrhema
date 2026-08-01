@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "📖 SeekRhema",
+    "title": "📖 AskRhema",
     "subtitle": "融合雙軌檢索與 AI 深度釋經"
   },
   "ui": {
@@ -13,7 +13,7 @@
       "depth_help": "返回的搜索結果數量"
     },
     "sidebar": {
-      "title": "SeekRhema 配置",
+      "title": "AskRhema 配置",
       "provider": "🤖 AI 提供商",
       "provider_help": "選擇AI解經的LLM提供商",
       "model": "🧠 模型",
@@ -108,6 +108,6 @@
       "google": "Google Gemini",
       "openai": "OpenAI"
     },
-    "system_prompt": "您是SeekRhema（融合精準檢索與 AI 深度釋經），一位專業的聖經助手。請嚴格根據提供的聖經經文來回答。對於每一處經文引用，請務必註明書卷、章節和經文編號。"
+    "system_prompt": "您是AskRhema（融合精準檢索與 AI 深度釋經），一位專業的聖經助手。請嚴格根據提供的聖經經文來回答。對於每一處經文引用，請務必註明書卷、章節和經文編號。"
   }
 }
