@@ -1,5 +1,7 @@
 # How to debug AskRhema's Streamlit app and view logs:
 
+`pyclean . --debris && uv run streamlit run app.py`
+
 ## 1. Streamlit Built-in Debugging Options
 
 ### Run with Detailed Logging

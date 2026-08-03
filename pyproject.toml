@@ -1,45 +1,44 @@
-# pyproject.toml (add these sections)
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "askrhema"
-version = "0.3.0"
-description = "AskRhema - Hybrid Bible Search with AI Exegesis"
+version = "1.0.0"
+description = "AskRhema - Chat-first Bible search and exegesis assistant"
 readme = "README.md"
 requires-python = ">=3.14"
 authors = [
     {name = "AskRhema Team", email = "askrhema@example.com"}
 ]
-license = {text = "MIT OR Apache-2.0"}
+license = "MIT OR Apache-2.0"   # simple SPDX string, not a table
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Religion",
-    "License :: OSI Approved :: MIT License",
-    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3.14",
     "Operating System :: OS Independent",
     "Topic :: Religion",
     "Topic :: Text Processing :: Indexing",
 ]
-
 dependencies = [
     "streamlit>=1.40.0",
-    "qdrant-client>=1.12.0",
+    "qdrant-client>=1.16,<2",
     "sentence-transformers>=3.0.0",
     "rank-bm25>=0.2.2",
-    "google-genai>=0.1.0",
+    "google-genai>=1.0.0",
     "openai>=1.50.0",
     "httpx>=0.27.0",
     "pydantic>=2.9.0",
     "numpy>=1.26.0",
-    "torch>=2.0.0",
+    "torch>=2.3.0",
     "torchvision>=0.15.0",
-    "transformers>=4.30.0",
-    "tokenizers>=0.13.0",
+    "transformers>=4.41.0",
+    "tokenizers>=0.19.0",
     "pillow>=10.0.0",
 ]
+
+[project.scripts]
+askrhema = "app:main"
 
 [project.optional-dependencies]
 dev = [
@@ -51,24 +50,9 @@ dev = [
     "pre-commit>=3.5.0",
 ]
 
-[tool.hatch.build.targets.wheel]
-packages = ["engine", "i18n"]
-exclude = [
-    "tests",
-    "data",
-    "*.pyc",
-    "__pycache__",
-]
-
-[tool.hatch.build.targets.sdist]
-exclude = [
-    "tests",
-    "*.pyc",
-    "__pycache__",
-    ".git",
-    ".github",
-    ".vscode",
-]
+[tool.setuptools.packages.find]
+include = ["engine*", "i18n*"]   # only these packages are discovered
+exclude = ["tests*", "data*"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
@@ -77,22 +61,24 @@ testpaths = ["tests"]
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
-# Add this to include the project root in PYTHONPATH
 pythonpath = ["."]
 
 [tool.black]
-line-length = 100
+line-length = 80
 target-version = ['py314']
 
 [tool.ruff]
-line-length = 100
+line-length = 88
 target-version = "py314"
-select = ["E", "F", "W", "I", "N", "D", "UP", "B", "C4", "SIM", "TCH"]
+select = ["E", "F", "W", "I", "N", "D", "UP", "B", "C4", "SIM"]
 ignore = ["D100", "D104", "D107", "D203", "D212", "E501"]
-exclude = [".git", ".venv", "__pycache__", "build", "dist", "tests"]
+exclude = [".git", ".venv", "__pycache__", "*.pyc","build", "dist", "tests"]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
 
 [tool.ruff.isort]
-known-first-party = ["engine"]
+known-first-party = ["engine", "i18n"]
 
 [tool.mypy]
 python_version = "3.14"
@@ -110,9 +96,3 @@ warn_unreachable = true
 strict_equality = true
 strict_concatenate = true
 explicit_package_bases = true
-
-[dependency-groups]
-dev = [
-    "pytest>=9.1.1",
-    "pytest-cov>=7.1.0",
-]

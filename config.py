@@ -10,9 +10,10 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 logger.info("Config module initialized successfully.")
 
-@dataclass
+@dataclass(frozen=True)
 class SearchConfig:
     """Configuration for search parameters."""
+    
     top_k: int = 5
     rrf_k_constant: int = 60
     vector_size: int = 384
@@ -30,26 +31,35 @@ class SearchConfig:
             raise ValueError("collection_name cannot be empty")
 
 
-@dataclass
+@dataclass(frozen=True)
 class LLMConfig:
-    """Configuration for LLM providers."""
+    """Configuration for LLM providers and prompts."""
+    
     system_prompt: str = (
-        "You are AskRhema, an expert biblical assistant. "
-        "Ground your answer strictly in the provided Bible passages. "
-        "Always cite the Book, Chapter, and Verse for every passage reference. "
-        "Provide thorough, scholarly exegesis while remaining accessible to lay readers. "
-        "When discussing theological concepts, be precise and reference scripture."
+        "You are AskRhema, an expert biblical assistant.\n\n"
+        "Ground your answer strictly in the provided Bible passages.\n"
+        "Always cite the Book, Chapter, and Verse for every passage reference.\n"
+        "Do not invent biblical quotations or references.\n"
+        "When the retrieved passages do not adequately support an answer, clearly say so rather than presenting unsupported claims as Scripture.\n"
+        "Distinguish clearly between what the biblical text says and interpretive explanation."
     )
 
-    temperature: float = 0.7
-    max_tokens: int = 1000
-    ollama_url: str = "http://localhost:11434/api/generate"
-    ollama_default_model: str = "llama2"
-    google_model: str = "gemini-2.5-flash"
+    #ollama_url: str = "http://localhost:11434/api/generate"
+    ollama_url: str = "http://localhost:11434"
+    ollama_model: str = "llama3"
+    ollama_default_model: str = "llama3"
+    #google_model: str = "gemini-2.5-flash"
+    gemini_model: str = "gemini-2.5-flash"
     openai_model: str = "gpt-4o-mini"
+
+    # Provider-specific defaults; user may override via settings.
+    default_provider: str = "ollama"  # or "gemini", "openai"
+    
+    temperature: float = 0.7
+    max_tokens: int = 1024
     timeout_seconds: int = 60
     retry_attempts: int = 3
-    
+        
     def __post_init__(self) -> None:
         """Validate configuration values."""
         if not 0.0 <= self.temperature <= 1.0:
@@ -64,12 +74,14 @@ class LLMConfig:
             raise ValueError("ollama_url cannot be empty")
 
 
-@dataclass
+@dataclass(frozen=True)
 class EmbeddingConfig:
     """Configuration for embedding model."""
+    
     model_name: str = "all-MiniLM-L6-v2"
-    device: str = "cpu"
+    device: str = "cpu" # or "cuda"
     batch_size: int = 32
+    
     normalize_embeddings: bool = True
     show_progress_bar: bool = False
     
@@ -159,7 +171,7 @@ def get_llm_config(provider: str) -> Dict[str, Any]:
             "default_model": DEFAULT_LLM_CONFIG.ollama_default_model,
         },
         "google": {
-            "model": DEFAULT_LLM_CONFIG.google_model,
+            "model": DEFAULT_LLM_CONFIG.gemini_model,
         },
         "openai": {
             "model": DEFAULT_LLM_CONFIG.openai_model,

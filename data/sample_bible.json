@@ -106,5 +106,23 @@
     "text": "Do not conform to the pattern of this world, but be transformed by the renewing of your mind. Then you will be able to test and approve what God's will is—his good, pleasing and perfect will.",
     "testament": "NT",
     "category": "Faith"
+  },
+  {
+    "id": 13,
+    "book": "Genesis",
+    "chapter": 50,
+    "verse": 20,
+    "text": "You intended to harm me, but God intended it for good to accomplish what is now being done, the saving of many lives.",
+    "testament": "OT",
+    "category": "Patriarchs"
+  },
+  {
+    "id": 14,
+    "book": "Psalms",
+    "chapter": 119,
+    "verse": 105,
+    "text": "Your word is a lamp for my feet, a light on my path.",
+    "testament": "OT",
+    "category": "Wisdom"
   }
-]
+  ]
