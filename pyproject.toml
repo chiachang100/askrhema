@@ -46,10 +46,6 @@ dev = [
 [tool.uv]
 package = false
 
-[tool.setuptools.packages.find]
-include = ["engine*", "i18n*"]   # only these packages are discovered
-exclude = ["tests*", "data*"]
-
 [tool.pytest.ini_options]
 minversion = "7.0"
 addopts = "-ra -q --strict-markers -v"
