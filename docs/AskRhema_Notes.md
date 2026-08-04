@@ -11,3 +11,7 @@
 - GitHub repo branch: `chiachang100/askrhema/main/app.py`
 
 ---
+- Set LLM provider for remote deployment
+  - `ASKRHEMA_DEFAULT_PROVIDER=gemini`
+
+---

@@ -1,6 +1,7 @@
 """Configuration module for AskRhema."""
 
 import logging
+import os
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -52,7 +53,7 @@ class LLMConfig:
     openai_model: str = "gpt-4o-mini"
 
     # Provider-specific defaults; user may override via settings.
-    default_provider: str = "ollama"  # or "gemini", "openai"
+    default_provider: str = os.getenv("ASKRHEMA_DEFAULT_PROVIDER", "ollama")
 
     temperature: float = 0.7
     max_tokens: int = 1024
@@ -159,7 +160,7 @@ def get_llm_config(provider: str) -> dict[str, Any]:
             "url": DEFAULT_LLM_CONFIG.ollama_url,
             "default_model": DEFAULT_LLM_CONFIG.ollama_default_model,
         },
-        "google": {
+        "gemini": {
             "model": DEFAULT_LLM_CONFIG.gemini_model,
         },
         "openai": {

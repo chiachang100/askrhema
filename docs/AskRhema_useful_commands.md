@@ -1,5 +1,10 @@
 # AskRhema Useful Commands
 
+- Clean the directory
+  - `pyclean . --debris`
+
+- Test
+  - `uv run pytest`
 
 - Fix Ruff issues automatically
   - `uv run ruff check . --fix`
