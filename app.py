@@ -1,5 +1,8 @@
 """AskRhema – Chat-first Bible search and exegesis assistant with i18n."""
 
+import logging
+import uuid
+
 import streamlit as st
 
 from config import (
@@ -13,6 +16,7 @@ from engine.hybrid_search import get_search_engine
 from engine.llm_provider import get_available_models
 from i18n.translations import get_available_languages, get_translations
 
+logger = logging.getLogger(__name__)
 
 def get_secret(key: str, default: str = "") -> str:
     """
@@ -29,12 +33,16 @@ def get_secret(key: str, default: str = "") -> str:
 
 def get_api_key_for_provider(provider: str) -> str:
     """Return the configured API key for the selected provider."""
-    if provider == "gemini":
-        return get_secret("GEMINI_API_KEY")
-    if provider == "openai":
-        return get_secret("OPENAI_API_KEY")
-    return ""
+    key_names = {
+        "gemini": "GEMINI_API_KEY",
+        "openai": "OPENAI_API_KEY",
+    }
 
+    secret_name = key_names.get(provider)
+    if not secret_name:
+        return ""
+
+    return get_secret(secret_name)
 
 def reset_conversation() -> None:
     """Reset the current conversation history."""
@@ -404,16 +412,22 @@ if prompt := st.chat_input(
 
             response_placeholder.markdown(full_response)
 
-        except Exception as exc:
-            error_message = str(exc)
+        except Exception:
+            error_id = uuid.uuid4().hex[:8]
 
-            st.error(
-                f"{t.get('ui.ai.error', 'Error generating AI response')}: "
-                f"{error_message}"
+            logger.exception(
+                "AI response generation failed [error_id=%s]",
+                error_id,
             )
 
-            full_response = f"Sorry, I encountered an error: {error_message}"
+            user_error = t.get(
+                "ui.ai.error",
+                "Sorry, we couldn't generate a response.",
+            )
 
+            st.error(f"{user_error} (Error ID: {error_id})")
+
+            full_response = user_error
             response_placeholder.markdown(full_response)
             sources = []
 
