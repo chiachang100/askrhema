@@ -100,7 +100,7 @@
   "llm": {
     "providers": {
       "ollama": "🏠 Local Ollama",
-      "google": "☁️ Google Gemini",
+      "gemini": "☁️ Google Gemini",
       "openai": "☁️ OpenAI"
     },
     "models": {
