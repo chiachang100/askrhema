@@ -65,9 +65,6 @@ htmlcov/
 *.cover
 .hypothesis/
 
-# UV
-uv.lock
-
 # Database files
 *.db
 *.sqlite

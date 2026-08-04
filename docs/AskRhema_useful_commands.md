@@ -9,4 +9,7 @@
 - Run MyPy:
   - `uv run mypy .`
 
+- Auto generate `requirements.txt` file
+  - `uv export --format requirements.txt --no-dev --output-file requirements.txt`
+
 ---
