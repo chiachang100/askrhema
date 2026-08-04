@@ -3,16 +3,19 @@
 import json
 from pathlib import Path
 from typing import Any
+
 from pydantic import BaseModel, ValidationError
 
 
 class Verse(BaseModel):
+    """Represents a Bible verse."""
+
     book: str
     chapter: int
     verse: int
     text: str
     # optional fields can be added with defaults
-    
+
 class BibleDataError(Exception):
     """Raised when Bible data is invalid or malformed."""
 

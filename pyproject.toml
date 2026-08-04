@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "askrhema"
-version = "1.0.1"
+version = "1.1.0"
 description = "AskRhema - Chat-first Bible search and exegesis assistant"
 readme = "README.md"
 requires-python = ">=3.14"
