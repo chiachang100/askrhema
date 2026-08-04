@@ -109,29 +109,25 @@ class HybridSearchEngine:
         if top_k is None:
             top_k = self.search_config.top_k
 
-        # Build Qdrant filter
-        qdrant_filter = None
-        if book_filter or testament_filter:
-            conditions = []
-            if book_filter:
-                conditions.append(
-                    qdrant_models.FieldCondition(
-                        key="book",
-                        match=qdrant_models.MatchValue(value=book_filter),
-                    )
+        # Build Qdrant filter (for dense search)
+        conditions = []
+        if book_filter:
+            conditions.append(
+                qdrant_models.FieldCondition(
+                    key="book",
+                    match=qdrant_models.MatchValue(value=book_filter),
                 )
-            if testament_filter:
-                conditions.append(
-                    qdrant_models.FieldCondition(
-                        key="testament",
-                        match=qdrant_models.MatchValue(value=testament_filter),
-                    )
-                )
-            qdrant_filter = qdrant_models.Filter(
-                must=conditions if len(conditions) > 1 else conditions[0]
             )
+        if testament_filter:
+            conditions.append(
+                qdrant_models.FieldCondition(
+                    key="testament",
+                    match=qdrant_models.MatchValue(value=testament_filter),
+                )
+            )
+        qdrant_filter = qdrant_models.Filter(must=conditions) if conditions else None
 
-        # Dense search
+        # Dense search (already filtered via Qdrant)
         query_embedding = self.embedder.encode(query, show_progress_bar=False)
         dense_results = self._dense_search(
             query_vector=query_embedding.tolist(),
@@ -140,16 +136,28 @@ class HybridSearchEngine:
         )
         dense_rank_map = {hit.id: rank + 1 for rank, hit in enumerate(dense_results)}
 
-        # Sparse (BM25) search
+        # Sparse (BM25) search – get scores for all verses
         bm25_scores = self.bm25.get_scores(query.split())
         candidate_count = top_k * 4 if (book_filter or testament_filter) else top_k * 2
         sparse_indices = np.argsort(bm25_scores)[::-1][:candidate_count]
+
+        # Filter sparse indices to only those matching the filters (if any)
+        filtered_sparse_indices = []
+        for idx in sparse_indices:
+            verse = self.bible_data[idx]
+            if book_filter and verse["book"] != book_filter:
+                continue
+            if testament_filter and verse["testament"] != testament_filter:
+                continue
+            filtered_sparse_indices.append(idx)
+
+        # Build sparse rank map from filtered indices only
         sparse_rank_map = {}
-        for rank, idx in enumerate(sparse_indices, start=1):
+        for rank, idx in enumerate(filtered_sparse_indices, start=1):
             verse_id = self.bible_data[idx]["id"]
             sparse_rank_map[verse_id] = rank
 
-        # Fusion (RRF)
+        # Fusion (RRF) – union of dense and sparse candidates
         candidate_ids = set(dense_rank_map.keys()) | set(sparse_rank_map.keys())
         rrf_scores = {}
         k = self.search_config.rrf_k_constant
@@ -169,10 +177,6 @@ class HybridSearchEngine:
         for verse_id in sorted_ids[:top_k]:
             verse = next((v for v in self.bible_data if v["id"] == verse_id), None)
             if verse is None:
-                continue
-            if book_filter and verse["book"] != book_filter:
-                continue
-            if testament_filter and verse["testament"] != testament_filter:
                 continue
             results.append(
                 SearchResult(

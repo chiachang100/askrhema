@@ -6,8 +6,9 @@ from collections.abc import Generator
 import httpx
 from google import genai
 from openai import OpenAI
+from openai.types.chat import ChatCompletionMessageParam
 
-from config import LLMConfig
+from config import DEFAULT_LLM_CONFIG, LLMConfig
 
 
 class LLMProviderError(Exception):
@@ -54,7 +55,9 @@ def _stream_ollama(
     temperature: float,
     max_tokens: int,
 ) -> Generator[str]:
-    url = f"{LLMConfig.ollama_url}/api/generate"
+    # url = f"{LLMConfig.ollama_url}/api/generate"
+    url = f"{DEFAULT_LLM_CONFIG.ollama_url}/api/generate"
+
     payload = {
         "model": model,
         "prompt": prompt,
@@ -108,7 +111,7 @@ def _stream_openai(
     max_tokens: int,
 ) -> Generator[str]:
     client = OpenAI(api_key=api_key)
-    messages = [
+    messages: list[ChatCompletionMessageParam] = [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": prompt},
     ]
@@ -129,7 +132,9 @@ def get_available_models(provider: str) -> list[str]:
     if provider == "ollama":
         try:
             with httpx.Client(timeout=5.0) as client:
-                resp = client.get(f"{LLMConfig.ollama_url}/api/tags")
+                # resp = client.get(f"{LLMConfig.ollama_url}/api/tags")
+                resp = client.get(f"{DEFAULT_LLM_CONFIG.ollama_url}/api/tags")
+
                 if resp.status_code == 200:
                     data = resp.json()
                     models = [m["name"] for m in data.get("models", [])]

@@ -105,16 +105,28 @@ uv lock
 - Copy all source files into the directory
 - Ensure the following structure:
 ```text
-# askrhema/
-# ├── app.py
-# ├── config.py
-# ├── engine/
-# │   ├── __init__.py
-# │   ├── hybrid_search.py
-# │   ├── indexer.py
-# │   └── llm_provider.py
-# └── data/
-#     └── sample_bible.json
+askrhema/
+├── app.py
+├── config.py
+├── engine/
+│   ├── __init__.py
+│   ├── hybrid_search.py
+│   ├── indexer.py
+│   └── llm_provider.py
+├── i18n/
+│   ├── locales/
+│   │   ├── en.json
+│   │   ├── zh-Hans.json
+│   │   └── zh-Hant.json
+│   ├── __init__.py
+│   ├── i18n.py
+│   ├── translations.py
+├── tests/
+│   ├── conftest.py
+│   ├── test_hybrid_search.py
+│   ├── test_indexer.py
+└── data/
+    └── sample_bible.json
 ```
 
 ### 3. Pin Python Version

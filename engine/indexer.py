@@ -16,6 +16,7 @@ class Verse(BaseModel):
     text: str
     # optional fields can be added with defaults
 
+
 class BibleDataError(Exception):
     """Raised when Bible data is invalid or malformed."""
 

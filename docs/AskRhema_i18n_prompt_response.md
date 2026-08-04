@@ -1,6 +1,6 @@
 # AskRhema i18n Prompt and Response
 
-To support multi-language prompts and responses for English, Traditional Chinese (zh-TW), and Simplified Chinese (zh-CN) in AskRhema, you need to align three layers:
+To support multi-language prompts and responses for English, Traditional Chinese (zh-Hant), and Simplified Chinese (zh-Hans) in AskRhema, you need to align three layers:
 
 - Translation Infrastructure (`i18n.py`) — Storing UI strings and prompts.
 - System Prompts (`config.py`) — Guiding the LLM to respond in the selected language.
@@ -17,11 +17,11 @@ SYSTEM_PROMPTS = {
 Ground your answer strictly in the provided Bible passages. Always cite the exact Book, Chapter, and Verse numbers.
 Respond in clear, accessible English.""",
 
-    "zh-TW": """你是 AskRhema，一位專業、敬虔且具備學者素養的聖經解經助手。
+    "zh-Hant": """你是 AskRhema，一位專業、敬虔且具備學者素養的聖經解經助手。
 請嚴格根據以下提供的聖經經文回答問題。每次引用經文時，必須明確標註書卷、章節與節數。
 請使用繁體中文（台灣習慣用語）進行回答。""",
 
-    "zh-CN": """你是 AskRhema，一位专业、敬虔且具备学者素养的圣经解经助手。
+    "zh-Hans": """你是 AskRhema，一位专业、敬虔且具备学者素养的圣经解经助手。
 请严格根据以下提供的圣经经文回答问题。每次引用经文时，必须明确标注书卷、章节与节数。
 请使用简体中文进行回答。"""
 }
@@ -29,15 +29,15 @@ Respond in clear, accessible English.""",
 def get_system_prompt(lang: str) -> str:
     return SYSTEM_PROMPTS.get(lang, SYSTEM_PROMPTS["en"])
 Step 2: Language Dictionary in i18n.py
-Ensure your language configuration supports all three language keys: en, zh-TW, and zh-CN.
+Ensure your language configuration supports all three language keys: en, zh-Hant, and zh-Hans.
 
 Python
 # i18n.py
 
 AVAILABLE_LANGUAGES = {
     "en": "English",
-    "zh-TW": "繁體中文",
-    "zh-CN": "简体中文"
+    "zh-Hant": "繁體中文",
+    "zh-Hans": "简体中文"
 }
 
 TRANSLATIONS = {
@@ -48,14 +48,14 @@ TRANSLATIONS = {
         "ui.ai.structure_context": "3. **Historical Context**",
         "ui.ai.structure_application": "4. **Practical Application**",
     },
-    "zh-TW": {
+    "zh-Hant": {
         "ui.ai.prompt_template": "請根據搜尋查詢「{query}」對以下聖經經文提供深入的釋經分析：",
         "ui.ai.structure_summary": "1. **摘要**",
         "ui.ai.structure_themes": "2. **神學主題**",
         "ui.ai.structure_context": "3. **歷史背景**",
         "ui.ai.structure_application": "4. **生活應用**",
     },
-    "zh-CN": {
+    "zh-Hans": {
         "ui.ai.prompt_template": "请根据搜索查询“{query}”对以下圣经经文提供深入的释经分析：",
         "ui.ai.structure_summary": "1. **摘要**",
         "ui.ai.structure_themes": "2. **神学主题**",
@@ -71,7 +71,7 @@ def build_exegetical_prompt(query: str, context_verses: list[dict], lang: str) -
     """Build a language-specific user prompt for the LLM."""
     verses_text = "\n".join([f"- {v['book']} {v['chapter']}:{v['verse']} - {v['text']}" for v in context_verses])
 
-    if lang == "zh-TW":
+    if lang == "zh-Hant":
         return f"""請根據查詢「{query}」檢索出的以下聖經經文，提供嚴謹且詳細的釋經分析：
 
 【上下文經文】：
@@ -85,7 +85,7 @@ def build_exegetical_prompt(query: str, context_verses: list[dict], lang: str) -
 
 請使用繁體中文回答，確保所有見解均以提供的經文為依據，並標註相應的經文出處。"""
 
-    elif lang == "zh-CN":
+    elif lang == "zh-Hans":
         return f"""请根据查询“{query}”检索出的以下圣经经文，提供严谨且详细的释经分析：
 
 【上下文经文】：
