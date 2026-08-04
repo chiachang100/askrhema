@@ -42,14 +42,20 @@ class Translations:
                 self._translations[lang_code] = {}
 
     def get(self, key: str, language: str | None = None) -> str:
-        """Return a translated string for the specified key."""
+        """Return a translated string for the specified dot-notation key."""
         lang = language or self._current_language
 
         if lang not in self._translations:
             lang = "en"
 
-        value = self._translations[lang].get(key, key)
-        return value
+        value: object = self._translations[lang]
+
+        for part in key.split("."):
+            if not isinstance(value, dict) or part not in value:
+                return key
+            value = value[part]
+
+        return value if isinstance(value, str) else key
 
     def set_language(self, language: str) -> None:
         """Set the current application language."""
