@@ -1,6 +1,6 @@
 """Conversational orchestration layer for AskRhema."""
 
-from typing import Any, Dict, Generator, List, Optional
+from collections.abc import Generator
 
 from config import LLMConfig, SearchConfig
 from engine.hybrid_search import HybridSearchEngine, SearchResult
@@ -8,9 +8,7 @@ from engine.llm_provider import stream_llm_response
 
 
 class ChatService:
-    """
-    Orchestrates conversation, retrieval, and LLM streaming.
-    """
+    """Orchestrates conversation, retrieval, and LLM streaming."""
 
     def __init__(
         self,
@@ -25,16 +23,16 @@ class ChatService:
     def process_message(
         self,
         user_message: str,
-        conversation_history: List[Dict[str, str]],
+        conversation_history: list[dict[str, str]],
         provider: str,
         model_name: str,
-        api_key: Optional[str] = None,
-        book_filter: Optional[str] = None,
-        testament_filter: Optional[str] = None,
+        api_key: str | None = None,
+        book_filter: str | None = None,
+        testament_filter: str | None = None,
         temperature: float = 0.7,
         max_tokens: int = 1024,
-        system_prompt_override: Optional[str] = None,   # NEW
-    ) -> Generator[tuple[str, List[SearchResult]], None, None]:
+        system_prompt_override: str | None = None,  # NEW
+    ) -> Generator[tuple[str, list[SearchResult]]]:
         """
         Process a user message: retrieve, build prompt, stream response.
 
@@ -52,6 +50,7 @@ class ChatService:
 
         Yields:
             Tuples of (text_chunk, sources_so_far).
+
         """
         # 1. Retrieve relevant verses
         results = self.search_engine.search(
@@ -91,13 +90,12 @@ class ChatService:
     def _build_prompt(
         self,
         user_message: str,
-        history: List[Dict[str, str]],
-        results: List[SearchResult],
+        history: list[dict[str, str]],
+        results: list[SearchResult],
     ) -> str:
-        """
-        Build the full prompt for the LLM, including conversation history and retrieved verses.
-        """
+        """Build the full prompt for the LLM, including conversation history and retrieved verses."""
         verses_text = ""
+
         if results:
             verses_text = "Here are the relevant Bible passages (with citations):\n\n"
             for r in results:

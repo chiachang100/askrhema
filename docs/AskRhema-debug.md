@@ -69,42 +69,46 @@ import logging
 import os
 from typing import Optional
 
-def setup_debug_logging(level: str = "DEBUG", log_file: Optional[str] = "askrhema_debug.log"):
+
+def setup_debug_logging(
+    level: str = "DEBUG", log_file: Optional[str] = "askrhema_debug.log"
+):
     """Setup logging configuration."""
     log_level = getattr(logging, level.upper(), logging.DEBUG)
-    
+
     # Create formatter
     formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
-    
+
     # Console handler
     console_handler = logging.StreamHandler()
     console_handler.setLevel(log_level)
     console_handler.setFormatter(formatter)
-    
+
     # File handler
     file_handler = None
     if log_file:
         file_handler = logging.FileHandler(log_file)
         file_handler.setLevel(log_level)
         file_handler.setFormatter(formatter)
-    
+
     # Configure root logger
     root_logger = logging.getLogger()
     root_logger.setLevel(log_level)
     root_logger.addHandler(console_handler)
     if file_handler:
         root_logger.addHandler(file_handler)
-    
+
     # Set specific levels for noisy modules
     logging.getLogger("qdrant_client").setLevel(logging.WARNING)
     logging.getLogger("sentence_transformers").setLevel(logging.WARNING)
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
-    
+
     return root_logger
+
 
 # Enable debug mode via environment variable
 DEBUG_MODE = os.getenv("SEEKRHEMA_DEBUG", "false").lower() == "true"
@@ -123,31 +127,36 @@ else:
 # In app.py, add to sidebar
 def display_sidebar():
     # ... existing code ...
-    
+
     st.sidebar.divider()
-    
+
     # Debug section
     if st.sidebar.checkbox("🐛 Debug Mode", help="Show debug information"):
         st.sidebar.subheader("🔧 Debug Info")
-        
+
         # Show session state keys
         with st.sidebar.expander("Session State"):
             for key, value in st.session_state.items():
                 if key not in ["search_engine", "search_results"]:  # Skip large objects
                     st.sidebar.write(f"**{key}**: {value}")
-        
+
         # Show search engine status
         if st.session_state.search_engine:
             st.sidebar.success("✅ Search Engine: Initialized")
-            st.sidebar.write(f"Collection: {st.session_state.search_engine.config.collection_name}")
-            st.sidebar.write(f"Vector Size: {st.session_state.search_engine.config.vector_size}")
+            st.sidebar.write(
+                f"Collection: {st.session_state.search_engine.config.collection_name}"
+            )
+            st.sidebar.write(
+                f"Vector Size: {st.session_state.search_engine.config.vector_size}"
+            )
         else:
             st.sidebar.error("❌ Search Engine: Not Initialized")
-        
+
         # Show environment info
         with st.sidebar.expander("Environment"):
             import sys
             import platform
+
             st.sidebar.write(f"Python: {sys.version}")
             st.sidebar.write(f"Platform: {platform.platform()}")
             st.sidebar.write(f"Streamlit: {st.__version__}")
@@ -184,8 +193,10 @@ import streamlit as st
 
 logger = logging.getLogger(__name__)
 
+
 def log_execution_time(func: Callable) -> Callable:
     """Decorator to log execution time."""
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         start = time.time()
@@ -193,12 +204,15 @@ def log_execution_time(func: Callable) -> Callable:
         elapsed = time.time() - start
         logger.debug(f"{func.__name__} took {elapsed:.3f}s")
         return result
+
     return wrapper
+
 
 def debug_print(*args, **kwargs):
     """Print debug messages only if debug mode is enabled."""
     if st.session_state.get("debug_mode", False):
         print("[DEBUG]", *args, **kwargs)
+
 
 # Use in your code
 @log_execution_time

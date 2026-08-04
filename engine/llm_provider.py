@@ -1,7 +1,7 @@
 """Multi-provider streaming LLM interface."""
 
 import json
-from typing import Generator, List, Optional
+from collections.abc import Generator
 
 import httpx
 from google import genai
@@ -12,6 +12,7 @@ from config import LLMConfig
 
 class LLMProviderError(Exception):
     """Raised when an LLM provider fails."""
+
     pass
 
 
@@ -20,21 +21,28 @@ def stream_llm_response(
     model_name: str,
     prompt: str,
     system_prompt: str,
-    api_key: Optional[str] = None,
-    context_verses: Optional[List[dict]] = None,
+    api_key: str | None = None,
+    context_verses: list[dict] | None = None,
     temperature: float = 0.7,
     max_tokens: int = 1024,
-) -> Generator[str, None, None]:
+) -> Generator[str]:
+    """Stream a response from the configured LLM provider."""
     if provider == "ollama":
-        yield from _stream_ollama(model_name, prompt, system_prompt, temperature, max_tokens)
+        yield from _stream_ollama(
+            model_name, prompt, system_prompt, temperature, max_tokens
+        )
     elif provider == "gemini":
         if not api_key:
             raise ValueError("Gemini API key is required")
-        yield from _stream_gemini(model_name, prompt, system_prompt, api_key, temperature, max_tokens)
+        yield from _stream_gemini(
+            model_name, prompt, system_prompt, api_key, temperature, max_tokens
+        )
     elif provider == "openai":
         if not api_key:
             raise ValueError("OpenAI API key is required")
-        yield from _stream_openai(model_name, prompt, system_prompt, api_key, temperature, max_tokens)
+        yield from _stream_openai(
+            model_name, prompt, system_prompt, api_key, temperature, max_tokens
+        )
     else:
         raise ValueError(f"Unknown provider: {provider}")
 
@@ -45,7 +53,7 @@ def _stream_ollama(
     system_prompt: str,
     temperature: float,
     max_tokens: int,
-) -> Generator[str, None, None]:
+) -> Generator[str]:
     url = f"{LLMConfig.ollama_url}/api/generate"
     payload = {
         "model": model,
@@ -54,19 +62,21 @@ def _stream_ollama(
         "stream": True,
         "options": {"temperature": temperature, "num_predict": max_tokens},
     }
-    with httpx.Client(timeout=60.0) as client:
-        with client.stream("POST", url, json=payload) as response:
-            response.raise_for_status()
-            for line in response.iter_lines():
-                if line:
-                    try:
-                        data = json.loads(line)
-                        if "response" in data:
-                            yield data["response"]
-                        if data.get("done", False):
-                            break
-                    except json.JSONDecodeError:
-                        continue
+    with (
+        httpx.Client(timeout=60.0) as client,
+        client.stream("POST", url, json=payload) as response,
+    ):
+        response.raise_for_status()
+        for line in response.iter_lines():
+            if line:
+                try:
+                    data = json.loads(line)
+                    if "response" in data:
+                        yield data["response"]
+                    if data.get("done", False):
+                        break
+                except json.JSONDecodeError:
+                    continue
 
 
 def _stream_gemini(
@@ -76,7 +86,7 @@ def _stream_gemini(
     api_key: str,
     temperature: float,
     max_tokens: int,
-) -> Generator[str, None, None]:
+) -> Generator[str]:
     client = genai.Client(api_key=api_key)
     full_prompt = f"{system_prompt}\n\n{prompt}"
     response = client.models.generate_content_stream(
@@ -96,7 +106,7 @@ def _stream_openai(
     api_key: str,
     temperature: float,
     max_tokens: int,
-) -> Generator[str, None, None]:
+) -> Generator[str]:
     client = OpenAI(api_key=api_key)
     messages = [
         {"role": "system", "content": system_prompt},
@@ -114,7 +124,8 @@ def _stream_openai(
             yield chunk.choices[0].delta.content
 
 
-def get_available_models(provider: str) -> List[str]:
+def get_available_models(provider: str) -> list[str]:
+    """Return the models available from the specified provider."""
     if provider == "ollama":
         try:
             with httpx.Client(timeout=5.0) as client:

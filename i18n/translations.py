@@ -2,23 +2,24 @@
 
 import json
 from pathlib import Path
-from typing import Dict, Any, Optional
+
 import streamlit as st
 
 
 class Translations:
     """Manages translations for the AskRhema application."""
 
-    _instance: Optional['Translations'] = None
-    _translations: Dict[str, Dict[str, str]] = {}
+    _instance: Translations | None = None
+    _translations: dict[str, dict[str, str]] = {}
     _current_language: str = "en"
-    _available_languages: Dict[str, str] = {
+    _available_languages: dict[str, str] = {
         "en": "English",
         "zh-Hans": "简体中文 (Simplified Chinese)",
         "zh-Hant": "繁體中文 (Traditional Chinese)",
     }
 
-    def __new__(cls) -> 'Translations':
+    def __new__(cls) -> Translations:
+        """Return the singleton Translations instance."""
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance._load_translations()
@@ -28,11 +29,11 @@ class Translations:
         """Load all translation files from the locales subdirectory."""
         locales_dir = Path(__file__).parent / "locales"
 
-        for lang_code in self._available_languages.keys():
+        for lang_code in self._available_languages:
             file_path = locales_dir / f"{lang_code}.json"
             if file_path.exists():
                 try:
-                    with open(file_path, 'r', encoding='utf-8') as f:
+                    with open(file_path, encoding="utf-8") as f:
                         self._translations[lang_code] = json.load(f)
                 except Exception as e:
                     print(f"Failed to load translations for {lang_code}: {e}")
@@ -40,42 +41,45 @@ class Translations:
             else:
                 self._translations[lang_code] = {}
 
-    def get(self, key: str, language: Optional[str] = None) -> str:
+    def get(self, key: str, language: str | None = None) -> str:
+        """Return a translated string for the specified key."""
         lang = language or self._current_language
-        if lang not in self._translations:
-            return key
 
-        parts = key.split('.')
-        value = self._translations[lang]
-        for part in parts:
-            if isinstance(value, dict) and part in value:
-                value = value[part]
-            else:
-                return key
-        return str(value) if value else key
+        if lang not in self._translations:
+            lang = "en"
+
+        value = self._translations[lang].get(key, key)
+        return value
 
     def set_language(self, language: str) -> None:
+        """Set the current application language."""
         if language in self._available_languages:
             self._current_language = language
             st.session_state.language = language
 
     def get_current_language(self) -> str:
+        """Return the current application language."""
         return st.session_state.get("language", "en")
 
-    def get_available_languages(self) -> Dict[str, str]:
+    def get_available_languages(self) -> dict[str, str]:
+        """Return the available language codes and names."""
         return self._available_languages
 
     def get_language_name(self, code: str) -> str:
+        """Return the display name for a language code."""
         return self._available_languages.get(code, code)
 
 
 def get_translations() -> Translations:
+    """Return the translations singleton."""
     return Translations()
 
 
 def get_language_name(lang_code: str) -> str:
+    """Return the display name for a language code."""
     return Translations().get_language_name(lang_code)
 
 
-def get_available_languages() -> Dict[str, str]:
+def get_available_languages() -> dict[str, str]:
+    """Return the available language mappings."""
     return Translations().get_available_languages()

@@ -1,10 +1,6 @@
 # i18n.py
 
-AVAILABLE_LANGUAGES = {
-    "en": "English",
-    "zh-TW": "繁體中文",
-    "zh-CN": "简体中文"
-}
+AVAILABLE_LANGUAGES = {"en": "English", "zh-TW": "繁體中文", "zh-CN": "简体中文"}
 
 TRANSLATIONS = {
     "en": {
@@ -27,5 +23,5 @@ TRANSLATIONS = {
         "ui.ai.structure_themes": "2. **神学主题**",
         "ui.ai.structure_context": "3. **历史背景**",
         "ui.ai.structure_application": "4. **实际应用**",
-    }
+    },
 }

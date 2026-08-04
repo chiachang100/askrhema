@@ -410,8 +410,7 @@ Implement complete Bible data loading and validation.
 Required function:
 
 ```python
-def load_bible_data(file_path: str) -> list[dict]:
-    ...
+def load_bible_data(file_path: str) -> list[dict]: ...
 ```
 
 Responsibilities:
@@ -437,8 +436,7 @@ category
 Also implement:
 
 ```python
-def get_verse_reference(verse: dict) -> str:
-    ...
+def get_verse_reference(verse: dict) -> str: ...
 ```
 
 Return a formatted reference such as:
@@ -566,8 +564,7 @@ def stream_llm_response(
     system_prompt: str,
     api_key: str | None = None,
     context_verses: list[dict] | None = None,
-) -> Generator[str, None, None]:
-    ...
+) -> Generator[str, None, None]: ...
 ```
 
 Implement all three providers.
@@ -635,8 +632,7 @@ Never expose API keys in error messages or logs.
 Also implement:
 
 ```python
-def get_available_models(provider: str) -> list[str]:
-    ...
+def get_available_models(provider: str) -> list[str]: ...
 ```
 
 ---

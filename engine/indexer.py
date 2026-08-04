@@ -3,10 +3,19 @@
 import json
 from pathlib import Path
 from typing import Any
+from pydantic import BaseModel, ValidationError
 
 
+class Verse(BaseModel):
+    book: str
+    chapter: int
+    verse: int
+    text: str
+    # optional fields can be added with defaults
+    
 class BibleDataError(Exception):
     """Raised when Bible data is invalid or malformed."""
+
     pass
 
 
@@ -25,7 +34,15 @@ def load_bible_data(file_path: str | Path) -> list[dict[str, Any]]:
     if not isinstance(data, list):
         raise BibleDataError("Bible data must be a JSON array")
 
-    required_fields = {"id", "book", "chapter", "verse", "text", "testament", "category"}
+    required_fields = {
+        "id",
+        "book",
+        "chapter",
+        "verse",
+        "text",
+        "testament",
+        "category",
+    }
     for i, record in enumerate(data):
         if not isinstance(record, dict):
             raise BibleDataError(f"Record {i} is not a dictionary")
@@ -59,7 +76,7 @@ def get_verse_reference(verse: dict[str, Any]) -> str:
 def validate_verse(verse: dict[str, Any]) -> bool:
     """Return True if the verse dict contains all required fields with valid types."""
     try:
-        load_bible_data([verse])   # re‑use the validation logic
+        Verse(**verse)
         return True
-    except BibleDataError:
+    except ValidationError:
         return False

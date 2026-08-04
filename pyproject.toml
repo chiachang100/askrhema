@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "askrhema"
-version = "1.0.0"
+version = "1.0.1"
 description = "AskRhema - Chat-first Bible search and exegesis assistant"
 readme = "README.md"
 requires-python = ">=3.14"
@@ -70,22 +70,25 @@ target-version = ['py314']
 [tool.ruff]
 line-length = 88
 target-version = "py314"
+
+[tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "D", "UP", "B", "C4", "SIM"]
 ignore = ["D100", "D104", "D107", "D203", "D212", "E501"]
 exclude = [".git", ".venv", "__pycache__", "*.pyc","build", "dist", "tests"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["engine", "i18n"]
 
 [tool.mypy]
 python_version = "3.14"
+exclude = ["tests/", "data/", ".venv/"]
+
 strict = true
 warn_return_any = true
 warn_unused_configs = true
-ignore_missing_imports = false
 disallow_untyped_defs = true
 disallow_any_unimported = true
 no_implicit_optional = true
@@ -96,3 +99,7 @@ warn_unreachable = true
 strict_equality = true
 strict_concatenate = true
 explicit_package_bases = true
+
+[[tool.mypy.overrides]]
+module = ["rank_bm25"]
+ignore_missing_imports = true

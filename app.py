@@ -11,7 +11,7 @@ from config import (
 from engine.chat import ChatService
 from engine.hybrid_search import get_search_engine
 from engine.llm_provider import get_available_models
-from i18n.translations import get_translations, get_available_languages
+from i18n.translations import get_available_languages, get_translations
 
 # Page config
 st.set_page_config(page_title="AskRhema", page_icon="📖", layout="wide")
@@ -61,6 +61,7 @@ t.set_language(st.session_state.language)
 
 
 def reset_conversation() -> None:
+    """Reset the current conversation history."""
     st.session_state.messages = []
 
 
@@ -73,7 +74,11 @@ with st.sidebar:
         lang_options = get_available_languages()
         lang_codes = list(lang_options.keys())
         lang_display = [f"{code} - {name}" for code, name in lang_options.items()]
-        current_index = lang_codes.index(st.session_state.language) if st.session_state.language in lang_codes else 0
+        current_index = (
+            lang_codes.index(st.session_state.language)
+            if st.session_state.language in lang_codes
+            else 0
+        )
         selected_display = st.selectbox(
             "Select language",
             options=lang_display,
@@ -105,7 +110,9 @@ with st.sidebar:
         model = st.selectbox(
             t.get("ui.sidebar.model"),
             options=models,
-            index=models.index(st.session_state.model) if st.session_state.model in models else 0,
+            index=models.index(st.session_state.model)
+            if st.session_state.model in models
+            else 0,
             key="model_selector",
             help=t.get("ui.sidebar.model_help"),
         )
@@ -114,18 +121,23 @@ with st.sidebar:
 
         if st.session_state.provider in ("gemini", "openai"):
             api_key = st.text_input(
-                t.get("ui.sidebar.google_key") if st.session_state.provider == "gemini" else t.get("ui.sidebar.openai_key"),
+                t.get("ui.sidebar.google_key")
+                if st.session_state.provider == "gemini"
+                else t.get("ui.sidebar.openai_key"),
                 type="password",
                 value=st.session_state.api_key,
                 key="api_key_input",
-                help=t.get("ui.sidebar.google_help") if st.session_state.provider == "gemini" else t.get("ui.sidebar.openai_help"),
+                help=t.get("ui.sidebar.google_help")
+                if st.session_state.provider == "gemini"
+                else t.get("ui.sidebar.openai_help"),
             )
             if api_key != st.session_state.api_key:
                 st.session_state.api_key = api_key
 
         temperature = st.slider(
             "Temperature",
-            0.0, 1.0,
+            0.0,
+            1.0,
             st.session_state.temperature,
             0.05,
             key="temp_slider",
@@ -135,7 +147,8 @@ with st.sidebar:
 
         max_tokens = st.number_input(
             "Max Tokens",
-            100, 4096,
+            100,
+            4096,
             st.session_state.max_tokens,
             100,
             key="max_tokens_input",
@@ -193,7 +206,9 @@ for message in st.session_state.messages:
                     st.caption(f"📖 Sources: {refs}")
 
 # Chat input
-if prompt := st.chat_input(t.get("ui.search.placeholder", "Ask AskRhema about Scripture...")):
+if prompt := st.chat_input(
+    t.get("ui.search.placeholder", "Ask AskRhema about Scripture...")
+):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
@@ -203,7 +218,9 @@ if prompt := st.chat_input(t.get("ui.search.placeholder", "Ask AskRhema about Sc
         full_response = ""
         sources = []
 
-        api_key = st.session_state.api_key if st.session_state.provider != "ollama" else None
+        api_key = (
+            st.session_state.api_key if st.session_state.provider != "ollama" else None
+        )
         chat_service = st.session_state.chat_service
 
         # Use the language-specific system prompt from config
@@ -220,7 +237,7 @@ if prompt := st.chat_input(t.get("ui.search.placeholder", "Ask AskRhema about Sc
                 testament_filter=st.session_state.testament_filter or None,
                 temperature=st.session_state.temperature,
                 max_tokens=st.session_state.max_tokens,
-                system_prompt_override=system_prompt,   # ✅ Pass override
+                system_prompt_override=system_prompt,  # ✅ Pass override
             )
             for chunk, current_sources in stream:
                 full_response += chunk
@@ -233,11 +250,13 @@ if prompt := st.chat_input(t.get("ui.search.placeholder", "Ask AskRhema about Sc
             response_placeholder.markdown(full_response)
             sources = []
 
-        st.session_state.messages.append({
-            "role": "assistant",
-            "content": full_response,
-            "sources": sources,
-        })
+        st.session_state.messages.append(
+            {
+                "role": "assistant",
+                "content": full_response,
+                "sources": sources,
+            }
+        )
         if sources and not st.session_state.show_retrieval_details:
             refs = ", ".join([r.reference for r in sources[:5]])
             if refs:
@@ -248,10 +267,10 @@ if prompt := st.chat_input(t.get("ui.search.placeholder", "Ask AskRhema about Sc
 if not st.session_state.messages:
     st.info(
         f"""
-        ### {t.get('app.title')}
-        {t.get('app.subtitle')}
+        ### {t.get("app.title")}
+        {t.get("app.subtitle")}
 
-        {t.get('ui.results.search_examples')}:
+        {t.get("ui.results.search_examples")}:
         - What does Romans 8:28 mean?
         - Explain the context of John 15.
         - What does Scripture say about forgiveness?

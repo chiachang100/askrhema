@@ -1,7 +1,7 @@
 """Hybrid search engine combining BM25 and dense vectors with RRF."""
 
 from dataclasses import dataclass
-from typing import Any, List, Optional
+from typing import Any
 
 import numpy as np
 import streamlit as st
@@ -17,13 +17,15 @@ from engine.indexer import get_verse_reference, load_bible_data
 @dataclass
 class SearchResult:
     """A single search result with metadata and scores."""
+
     verse: dict[str, Any]
-    dense_rank: Optional[int] = None
-    sparse_rank: Optional[int] = None
+    dense_rank: int | None = None
+    sparse_rank: int | None = None
     rrf_score: float = 0.0
 
     @property
     def reference(self) -> str:
+        """Return the formatted Bible verse reference."""
         return get_verse_reference(self.verse)
 
 
@@ -83,9 +85,9 @@ class HybridSearchEngine:
 
     def _dense_search(
         self,
-        query_vector: List[float],
+        query_vector: list[float],
         limit: int,
-        qdrant_filter: Optional[qdrant_models.Filter],
+        qdrant_filter: qdrant_models.Filter | None,
     ) -> list[Any]:
         """Perform dense vector search using Qdrant's current query API."""
         response = self.qdrant.query_points(
@@ -99,10 +101,11 @@ class HybridSearchEngine:
     def search(
         self,
         query: str,
-        top_k: Optional[int] = None,
-        book_filter: Optional[str] = None,
-        testament_filter: Optional[str] = None,
-    ) -> List[SearchResult]:
+        top_k: int | None = None,
+        book_filter: str | None = None,
+        testament_filter: str | None = None,
+    ) -> list[SearchResult]:
+        """Search for relevant Bible passages matching the query."""
         if top_k is None:
             top_k = self.search_config.top_k
 
@@ -158,7 +161,9 @@ class HybridSearchEngine:
                 score += 1.0 / (k + sparse_rank_map[verse_id])
             rrf_scores[verse_id] = score
 
-        sorted_ids = sorted(rrf_scores.keys(), key=lambda vid: rrf_scores[vid], reverse=True)
+        sorted_ids = sorted(
+            rrf_scores.keys(), key=lambda vid: rrf_scores[vid], reverse=True
+        )
 
         results = []
         for verse_id in sorted_ids[:top_k]:
@@ -183,6 +188,7 @@ class HybridSearchEngine:
 # Streamlit caching helpers
 @st.cache_resource
 def get_embedding_model(embedding_config: EmbeddingConfig) -> SentenceTransformer:
+    """Create and cache the sentence-transformer embedding model."""
     return SentenceTransformer(
         embedding_config.model_name,
         device=embedding_config.device,
@@ -195,5 +201,6 @@ def get_search_engine(
     search_config: SearchConfig,
     embedding_config: EmbeddingConfig,
 ) -> HybridSearchEngine:
+    """Create and cache the hybrid search engine."""
     bible_data = load_bible_data(data_path)
     return HybridSearchEngine(bible_data, search_config, embedding_config)
