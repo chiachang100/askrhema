@@ -1,6 +1,6 @@
 [project]
 name = "askrhema"
-version = "1.0.7"
+version = "1.0.8"
 description = "AskRhema - Conversational Bible search and AI exegesis assistant"
 readme = "README.md"
 requires-python = ">=3.14"
