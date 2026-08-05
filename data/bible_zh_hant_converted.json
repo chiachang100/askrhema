@@ -1,0 +1,128 @@
+[
+{
+"id": 1,
+"book": "創世記",
+"chapter": 1,
+"verse": 1,
+"text": "起初，神創造天地。",
+"testament": "舊約",
+"category": "創造"
+},
+{
+"id": 2,
+"book": "創世記",
+"chapter": 1,
+"verse": 27,
+"text": "神就照著自己的形象造人，乃是照著他的形象造男造女。",
+"testament": "舊約",
+"category": "創造"
+},
+{
+"id": 3,
+"book": "詩篇",
+"chapter": 23,
+"verse": 1,
+"text": "耶和華是我的牧者，我必不致缺乏。",
+"testament": "舊約",
+"category": "敬拜"
+},
+{
+"id": 4,
+"book": "詩篇",
+"chapter": 23,
+"verse": 4,
+"text": "我雖然行過死蔭的幽谷，也不怕遭害，因為你與我同在；你的杖、你的竿，都安慰我。",
+"testament": "舊約",
+"category": "安慰"
+},
+{
+"id": 5,
+"book": "以賽亞書",
+"chapter": 40,
+"verse": 31,
+"text": "但那等候耶和華的，必從新得力。他們必如鷹展翅上騰，他們奔跑卻不困倦，行走卻不疲乏。",
+"testament": "舊約",
+"category": "預言"
+},
+{
+"id": 6,
+"book": "以賽亞書",
+"chapter": 53,
+"verse": 5,
+"text": "哪知他為我們的過犯受害，為我們的罪孽壓傷。因他受的刑罰我們得平安，因他受的鞭傷我們得醫治。",
+"testament": "舊約",
+"category": "預言"
+},
+{
+"id": 7,
+"book": "馬太福音",
+"chapter": 5,
+"verse": 3,
+"text": "虛心的人有福了！因為天國是他們的。",
+"testament": "新約",
+"category": "登山寶訓"
+},
+{
+"id": 8,
+"book": "馬太福音",
+"chapter": 5,
+"verse": 8,
+"text": "清心的人有福了！因為他們必得見神。",
+"testament": "新約",
+"category": "登山寶訓"
+},
+{
+"id": 9,
+"book": "約翰福音",
+"chapter": 3,
+"verse": 16,
+"text": "神愛世人，甚至將他的獨生子賜給他們，叫一切信他的，不致滅亡，反得永生。",
+"testament": "新約",
+"category": "救恩"
+},
+{
+"id": 10,
+"book": "約翰福音",
+"chapter": 14,
+"verse": 6,
+"text": "耶穌說：「我就是道路、真理、生命；若不藉著我，沒有人能到父那裡去。」",
+"testament": "新約",
+"category": "救恩"
+},
+{
+"id": 11,
+"book": "羅馬書",
+"chapter": 8,
+"verse": 28,
+"text": "我們曉得萬事都互相效力，叫愛神的人得益處，就是按他旨意被召的人。",
+"testament": "新約",
+"category": "信心"
+},
+{
+"id": 12,
+"book": "羅馬書",
+"chapter": 12,
+"verse": 2,
+"text": "不要效法這個世界，只要心意更新而變化，叫你們察驗何為神的善良、純全、可喜悅的旨意。……就是祂那良善、純全、可喜悅的旨意。 ",
+"testament": "新約",
+"category": "信心"
+},
+{
+"id": 13,
+"book": "創世記",
+"chapter": 50,
+"verse": 20,
+"text": "從前你們的意思是要害我，但神的意思原是好的，要保全許多人的性命，成就今日的光景。",
+"testament": "舊約",
+"category": "先祖"
+},
+{
+"id": 14,
+"book": "詩篇",
+"chapter": 119,
+"verse": 105,
+"text": "你的話是我腳前的燈，是我路上的光。",
+"testament": "舊約",
+"category": "智慧"
+}
+]

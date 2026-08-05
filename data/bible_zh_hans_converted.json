@@ -1,0 +1,128 @@
+[
+{
+"id": 1,
+"book": "创世记",
+"chapter": 1,
+"verse": 1,
+"text": "起初，神创造天地。",
+"testament": "旧约",
+"category": "创造"
+},
+{
+"id": 2,
+"book": "创世记",
+"chapter": 1,
+"verse": 27,
+"text": "神就照着自己的形象造人，乃是照着他的形象造男造女。",
+"testament": "旧约",
+"category": "创造"
+},
+{
+"id": 3,
+"book": "诗篇",
+"chapter": 23,
+"verse": 1,
+"text": "耶和华是我的牧者，我必不致缺乏。",
+"testament": "旧约",
+"category": "敬拜"
+},
+{
+"id": 4,
+"book": "诗篇",
+"chapter": 23,
+"verse": 4,
+"text": "我虽然行过死荫的幽谷，也不怕遭害，因为你与我同在；你的杖、你的竿，都安慰我。",
+"testament": "旧约",
+"category": "安慰"
+},
+{
+"id": 5,
+"book": "以赛亚书",
+"chapter": 40,
+"verse": 31,
+"text": "但那等候耶和华的，必从新得力。他们必如鹰展翅上腾，他们奔跑却不困倦，行走却不疲乏。",
+"testament": "旧约",
+"category": "预言"
+},
+{
+"id": 6,
+"book": "以赛亚书",
+"chapter": 53,
+"verse": 5,
+"text": "哪知他为我们的过犯受害，为我们的罪孽压伤。因他受的刑罚我们得平安，因他受的鞭伤我们得医治。",
+"testament": "旧约",
+"category": "预言"
+},
+{
+"id": 7,
+"book": "马太福音",
+"chapter": 5,
+"verse": 3,
+"text": "虚心的人有福了！因为天国是他们的。",
+"testament": "新约",
+"category": "登山宝训"
+},
+{
+"id": 8,
+"book": "马太福音",
+"chapter": 5,
+"verse": 8,
+"text": "清心的人有福了！因为他们必得见神。",
+"testament": "新约",
+"category": "登山宝训"
+},
+{
+"id": 9,
+"book": "约翰福音",
+"chapter": 3,
+"verse": 16,
+"text": "神爱世人，甚至将他的独生子赐给他们，叫一切信他的，不致灭亡，反得永生。",
+"testament": "新约",
+"category": "救恩"
+},
+{
+"id": 10,
+"book": "约翰福音",
+"chapter": 14,
+"verse": 6,
+"text": "耶稣说：「我就是道路、真理、生命；若不借着我，没有人能到父那里去。」",
+"testament": "新约",
+"category": "救恩"
+},
+{
+"id": 11,
+"book": "罗马书",
+"chapter": 8,
+"verse": 28,
+"text": "我们晓得万事都互相效力，叫爱神的人得益处，就是按他旨意被召的人。 ",
+"testament": "新约",
+"category": "信心"
+},
+{
+"id": 12,
+"book": "罗马书",
+"chapter": 12,
+"verse": 2,
+"text": "不要效法这个世界，只要心意更新而变化，叫你们察验何为神的善良、纯全、可喜悦的旨意。 ……就是祂那良善、纯全、可喜悦的旨意。 ",
+"testament": "新约",
+"category": "信心"
+},
+{
+"id": 13,
+"book": "创世记",
+"chapter": 50,
+"verse": 20,
+"text": "从前你们的意思是要害我，但神的意思原是好的，要保全许多人的性命，成就今日的光景。 ",
+"testament": "旧约",
+"category": "先祖"
+},
+{
+"id": 14,
+"book": "诗篇",
+"chapter": 119,
+"verse": 105,
+"text": "你的话是我脚前的灯，是我路上的光。 ",
+"testament": "旧约",
+"category": "智慧"
+}
+]

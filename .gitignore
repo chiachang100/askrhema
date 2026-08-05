@@ -66,7 +66,7 @@ htmlcov/
 .hypothesis/
 
 # Database files
-*.db
+#*.db
 *.sqlite
 *.sqlite3
 
@@ -101,5 +101,5 @@ desktop.ini
 *.pth
 
 # Data files (except sample)
-data/*.json
+#data/*.json
 !data/sample_bible.json
