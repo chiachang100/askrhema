@@ -144,7 +144,12 @@ def get_available_models(provider: str) -> list[str]:
             pass
         return [LLMConfig.ollama_model]
     elif provider == "gemini":
-        return [ "gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-3.1-flash-lite", ]
+        return [
+            "gemini-3.6-flash",
+            "gemini-3.5-flash",
+            "gemini-3.5-flash-lite",
+            "gemini-3.1-flash-lite",
+        ]
     elif provider == "openai":
         return ["gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo"]
     else:

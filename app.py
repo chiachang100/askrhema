@@ -1,9 +1,9 @@
 """AskRhema – Conversational Bible search and AI exegesis assistant with i18n."""
 
 import logging
+import tomllib
 import uuid
 from pathlib import Path
-import tomllib
 
 import streamlit as st
 
@@ -11,6 +11,7 @@ from config import (
     DEFAULT_EMBEDDING_CONFIG,
     DEFAULT_LLM_CONFIG,
     DEFAULT_SEARCH_CONFIG,
+    DataConfig,
     get_system_prompt,
 )
 from engine.chat import ChatService
@@ -19,6 +20,7 @@ from engine.llm_provider import get_available_models
 from i18n.translations import get_available_languages, get_translations
 
 logger = logging.getLogger(__name__)
+
 
 @st.cache_data
 def get_app_version() -> str:
@@ -32,6 +34,7 @@ def get_app_version() -> str:
 
 
 APP_VERSION = get_app_version()
+
 
 def get_secret(key: str, default: str = "") -> str:
     """
@@ -59,6 +62,7 @@ def get_api_key_for_provider(provider: str) -> str:
 
     return get_secret(secret_name)
 
+
 def reset_conversation() -> None:
     """Reset the current conversation history."""
     st.session_state.messages = []
@@ -70,60 +74,60 @@ st.set_page_config(
     layout="wide",
 )
 
-# --------------------------------------------------------------------------- 
-# # Chat styling 
-# # --------------------------------------------------------------------------- 
-st.markdown( 
-    """ 
-    <style> 
-    /* User message: avatar and content move to the right. */
-    [data-testid="stChatMessage"]:has( 
-        [data-testid="stChatMessageAvatarUser"] 
-    ) { 
-        flex-direction: row-reverse; 
-    } 
+# ---------------------------------------------------------------------------
+# Chat styling
+# ---------------------------------------------------------------------------
+st.markdown(
+    """
+<style>
+/* User message: avatar and content move to the right. */
+[data-testid="stChatMessage"]:has(
+    [data-testid="stChatMessageAvatarUser"]
+) {
+    flex-direction: row-reverse;
+}
 
-    /* User message content area. */
-    [data-testid="stChatMessage"]:has(
-        [data-testid="stChatMessageAvatarUser"]
-    ) [data-testid="stChatMessageContent"] {
-        align-items: flex-end;
-        text-align: right;
-    }
-    
-    /* User bubble: target the actual markdown/content wrapper. */
-    [data-testid="stChatMessage"]:has( 
-        [data-testid="stChatMessageAvatarUser"] 
-    ) [data-testid="stChatMessageContent"] > div { 
-        background: rgba(100, 116, 139, 0.12); 
-        border-radius: 18px 18px 4px 18px; 
-        padding: 0.7rem 1rem; 
-        width: fit-content;
-        max-width: 75%; 
-        margin-left: auto;
-    } 
+/* User message content area. */
+[data-testid="stChatMessage"]:has(
+    [data-testid="stChatMessageAvatarUser"]
+) [data-testid="stChatMessageContent"] {
+    align-items: flex-end;
+    text-align: right;
+}
 
-    /* Make paragraphs inside the user bubble right-aligned. */
-    [data-testid="stChatMessage"]:has(
-        [data-testid="stChatMessageAvatarUser"]
-    ) [data-testid="stChatMessageContent"] p {
-        text-align: right;
-    }
-    
-    /* Assistant messages remain left-aligned. */
-    [data-testid="stChatMessage"]:has( 
-        [data-testid="stChatMessageAvatarAssistant"] 
-    ) [data-testid="stChatMessageContent"] {
-        text-align: left;
-    }
-    
-    /* Remove unnecessary bottom margin from final paragraph. */
-    [data-testid="stChatMessageContent"] p:last-child { 
-        margin-bottom: 0; 
-    } 
-    </style> 
-    """, 
-    unsafe_allow_html=True, 
+/* User bubble: target the actual markdown/content wrapper. */
+[data-testid="stChatMessage"]:has(
+    [data-testid="stChatMessageAvatarUser"]
+) [data-testid="stChatMessageContent"] > div {
+    background: rgba(100, 116, 139, 0.12);
+    border-radius: 18px 18px 4px 18px;
+    padding: 0.7rem 1rem;
+    width: fit-content;
+    max-width: 75%;
+    margin-left: auto;
+}
+
+/* Make paragraphs inside the user bubble right-aligned. */
+[data-testid="stChatMessage"]:has(
+    [data-testid="stChatMessageAvatarUser"]
+) [data-testid="stChatMessageContent"] p {
+    text-align: right;
+}
+
+/* Assistant messages remain left-aligned. */
+[data-testid="stChatMessage"]:has(
+    [data-testid="stChatMessageAvatarAssistant"]
+) [data-testid="stChatMessageContent"] {
+    text-align: left;
+}
+
+/* Remove unnecessary bottom margin from final paragraph. */
+[data-testid="stChatMessageContent"] p:last-child {
+    margin-bottom: 0;
+}
+</style>
+""",
+    unsafe_allow_html=True,
 )
 
 t = get_translations()
@@ -149,9 +153,7 @@ if "model" not in st.session_state:
     st.session_state.model = models[0] if models else DEFAULT_LLM_CONFIG.ollama_model
 
 if "api_key" not in st.session_state:
-    st.session_state.api_key = get_api_key_for_provider(
-        st.session_state.provider
-    )
+    st.session_state.api_key = get_api_key_for_provider(st.session_state.provider)
 
 if "temperature" not in st.session_state:
     st.session_state.temperature = DEFAULT_LLM_CONFIG.temperature
@@ -171,27 +173,41 @@ if "show_retrieval_details" not in st.session_state:
 if "language" not in st.session_state:
     st.session_state.language = "en"
 
-
-# ---------------------------------------------------------------------------
-# Initialize search engine and chat service
-# ---------------------------------------------------------------------------
-
+# ----------------------------------------------------------------------
+# Engine-related session state (always initialised)
+# ----------------------------------------------------------------------
 if "search_engine" not in st.session_state:
+    st.session_state.search_engine = None
+if "chat_service" not in st.session_state:
+    st.session_state.chat_service = None
+if "current_db_path" not in st.session_state:
+    st.session_state.current_db_path = None
+
+# Set language for translations
+t.set_language(st.session_state.language)
+
+# Determine which database to use for the current language
+data_config = DataConfig()
+db_path = data_config.get_db_path(st.session_state.language)
+
+# Rebuild engine if needed (first run or language changed)
+if (
+    st.session_state.search_engine is None
+    or st.session_state.current_db_path != db_path
+):
     st.session_state.search_engine = get_search_engine(
-        "data/sample_bible.json",
+        db_path,
         DEFAULT_SEARCH_CONFIG,
         DEFAULT_EMBEDDING_CONFIG,
     )
+    st.session_state.current_db_path = db_path
 
-if "chat_service" not in st.session_state:
+    # Always recreate chat_service whenever the engine is rebuilt
     st.session_state.chat_service = ChatService(
         st.session_state.search_engine,
         DEFAULT_SEARCH_CONFIG,
         DEFAULT_LLM_CONFIG,
     )
-
-t.set_language(st.session_state.language)
-
 
 # ---------------------------------------------------------------------------
 # Sidebar
@@ -204,9 +220,7 @@ with st.sidebar:
     with st.expander("Language", expanded=False):
         lang_options = get_available_languages()
         lang_codes = list(lang_options.keys())
-        lang_display = [
-            f"{code} - {name}" for code, name in lang_options.items()
-        ]
+        lang_display = [f"{code} - {name}" for code, name in lang_options.items()]
 
         current_index = (
             lang_codes.index(st.session_state.language)
@@ -226,6 +240,7 @@ with st.sidebar:
         if selected_code != st.session_state.language:
             st.session_state.language = selected_code
             t.set_language(selected_code)
+            # The engine will be rebuilt on next run because the path changes
             st.rerun()
 
     # AI provider
@@ -259,11 +274,7 @@ with st.sidebar:
             st.session_state.model = (
                 models[0]
                 if models
-                else (
-                    DEFAULT_LLM_CONFIG.ollama_model 
-                    if provider == "ollama" 
-                    else ""
-                )
+                else (DEFAULT_LLM_CONFIG.ollama_model if provider == "ollama" else "")
             )
 
             st.session_state.api_key = get_api_key_for_provider(provider)
@@ -409,7 +420,7 @@ with st.sidebar:
 # ---------------------------------------------------------------------------
 
 st.title(t.get("app.title"))
-st.caption(f"{t.get("app.subtitle")} - v{APP_VERSION}")
+st.caption(f"{t.get('app.subtitle')} - v{APP_VERSION}")
 
 # ---------------------------------------------------------------------------
 # Display previous chat messages
@@ -464,7 +475,16 @@ if prompt := st.chat_input(
         else:
             api_key = st.session_state.api_key.strip()
 
+        # ----- FALLBACK: ensure chat_service is not None -----
+        if st.session_state.chat_service is None:
+            st.session_state.chat_service = ChatService(
+                st.session_state.search_engine,
+                DEFAULT_SEARCH_CONFIG,
+                DEFAULT_LLM_CONFIG,
+            )
         chat_service = st.session_state.chat_service
+        # ------------------------------------------------------
+
         system_prompt = get_system_prompt(st.session_state.language)
 
         try:

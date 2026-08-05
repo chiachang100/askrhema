@@ -58,7 +58,7 @@ wheels = [
 
 [[package]]
 name = "askrhema"
-version = "1.0.7"
+version = "1.0.8"
 source = { virtual = "." }
 dependencies = [
     { name = "google-genai" },

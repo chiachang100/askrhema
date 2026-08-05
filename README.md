@@ -155,6 +155,18 @@ uv lock
 ```
 
 ---
+## Generate SQLite databases
+
+- Create the English database
+  - `uv run python scripts/create_bible_dbs.py data/bible_en_converted.json data/bible_en.db`
+
+- Create Simplified Chinese
+  - `uv run python scripts/create_bible_dbs.py data/bible_zh_hans_converted.json data/bible_zh_hans.db`
+
+- Create Traditional Chinese
+  - `uv run python scripts/create_bible_dbs.py data/bible_zh_hant_converted.json data/bible_zh_hant.db`
+
+---
 
 ## 🚀 Running the Application
 Start the Application

@@ -10,6 +10,22 @@ logger = logging.getLogger(__name__)
 logger.info("Config module initialized successfully.")
 
 
+@dataclass
+class DataConfig:
+    base_dir: str = "data"
+    bible_db_en: str = "data/bible_en.db"
+    bible_db_zh_hans: str = "data/bible_zh_hans.db"
+    bible_db_zh_hant: str = "data/bible_zh_hant.db"
+
+    def get_db_path(self, lang_code: str) -> str:
+        mapping = {
+            "en": self.bible_db_en,
+            "zh-Hans": self.bible_db_zh_hans,
+            "zh-Hant": self.bible_db_zh_hant,
+        }
+        return mapping.get(lang_code, self.bible_db_en)
+
+
 @dataclass(frozen=True)
 class SearchConfig:
     """Configuration for search parameters."""

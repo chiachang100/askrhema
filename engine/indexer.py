@@ -1,6 +1,7 @@
 """Bible data loading, validation, and reference formatting."""
 
 import json
+import sqlite3
 from pathlib import Path
 from typing import Any
 
@@ -23,17 +24,50 @@ class BibleDataError(Exception):
     pass
 
 
-def load_bible_data(file_path: str | Path) -> list[dict[str, Any]]:
-    """Load and validate Bible verses from a JSON file."""
-    path = Path(file_path)
+def _load_bible_data_from_sqlite(path: Path) -> list[dict[str, Any]]:
+    """Load Bible verses from a SQLite database."""
     if not path.exists():
-        raise BibleDataError(f"Bible data file not found: {file_path}")
+        raise BibleDataError(f"SQLite database not found: {path}")
+
+    try:
+        conn = sqlite3.connect(str(path))
+        conn.row_factory = sqlite3.Row  # enables dict-like access
+        cursor = conn.cursor()
+
+        # Get all verses
+        cursor.execute("""
+            SELECT id, book, chapter, verse, text, testament, category
+            FROM verses
+            ORDER BY id
+        """)
+        rows = cursor.fetchall()
+        conn.close()
+
+        if not rows:
+            raise BibleDataError(f"No verses found in database: {path}")
+
+        # Convert sqlite3.Row objects to regular dicts
+        return [dict(row) for row in rows]
+
+    except sqlite3.OperationalError as e:
+        raise BibleDataError(f"SQLite error in {path}: {e}") from e
+
+
+def _load_bible_data_from_json(path: Path) -> list[dict[str, Any]]:
+    """Load and validate Bible verses from a JSON or SQLite file."""
+    path = Path(path)
+    if not path.exists():
+        raise BibleDataError(f"Bible data file not found: {path}")
+
+    # Check if the file is a SQLite database
+    if path.suffix == ".db":
+        return _load_bible_data_from_sqlite(path)
 
     try:
         with path.open("r", encoding="utf-8") as f:
             data = json.load(f)
     except json.JSONDecodeError as e:
-        raise BibleDataError(f"Invalid JSON in {file_path}: {e}") from e
+        raise BibleDataError(f"Invalid JSON in {path}: {e}") from e
 
     if not isinstance(data, list):
         raise BibleDataError("Bible data must be a JSON array")
@@ -70,6 +104,22 @@ def load_bible_data(file_path: str | Path) -> list[dict[str, Any]]:
             raise BibleDataError(f"Record {i} has empty 'category'")
 
     return data
+
+
+def load_bible_data(file_path: str | Path) -> list[dict[str, Any]]:
+    """Load and validate Bible verses from JSON or SQLite."""
+    path = Path(file_path)
+
+    if not path.exists():
+        raise BibleDataError(f"Bible data file not found: {file_path}")
+
+    # Delegate to the appropriate loader based on file extension
+    if path.suffix.lower() == ".json":
+        return _load_bible_data_from_json(path)
+    elif path.suffix.lower() == ".db":
+        return _load_bible_data_from_sqlite(path)
+    else:
+        raise BibleDataError(f"Unsupported file type: {path.suffix}")
 
 
 def get_verse_reference(verse: dict[str, Any]) -> str:
