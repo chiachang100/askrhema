@@ -1,6 +1,6 @@
 # AskRhema Master Prompt Notes
 
-Absolutely. I’ve kept the original technical stack, uv workflow, hybrid BM25 + dense retrieval, RRF, three LLM providers, security requirements, and full-code generation mandate, while redesigning the product around a chat-first experience. The original prompt’s technical foundation is preserved here.
+Absolutely. I’ve kept the original technical stack, uv workflow, hybrid BM25 + dense retrieval, RRF, three LLM providers, security requirements, and full-code generation mandate, while redesigning the product around a conversational experience. The original prompt’s technical foundation is preserved here.
 
 Here is the replacement master prompt:
 
@@ -21,7 +21,7 @@ Something like:
 
 main
   │
-  └── feature/chat-first-ui
+  └── feature/conversational-ui
 
 Then refactor toward:
 
@@ -42,7 +42,7 @@ Then refactor toward:
           │
           └──────────────┬──────────────┘
                          ↓
-                  CHAT-FIRST UI
+                  CONVERSATIONAL UI
                          │
                   st.chat_message
                   st.chat_input
@@ -83,7 +83,7 @@ That's likely to result in it rewriting working pieces unnecessarily.
 
 Instead, I'd give it a migration/refactoring prompt with explicit instructions:
 
-Preserve all working backend functionality. Do not rewrite the search/indexing/LLM infrastructure unless necessary. Replace the existing Streamlit interaction model with a chat-first interface.
+Preserve all working backend functionality. Do not rewrite the search/indexing/LLM infrastructure unless necessary. Replace the existing Streamlit interaction model with a conversational interface.
 
 Then make the changes incrementally.
 
@@ -93,7 +93,7 @@ Phase 1 — Protect the existing app
 
 Create a branch and make sure the current application runs.
 
-git checkout -b feature/chat-first-ui
+git checkout -b feature/conversational-ui
 uv run streamlit run app.py
 
 Commit the working baseline.

@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "📖 AskRhema",
-    "subtitle": "Hybrid Bible Search with AI Exegesis"
+    "subtitle": "Conversational Bible search and AI exegesis assistant"
   },
   "ui": {
     "search": {
@@ -108,6 +108,6 @@
       "google": "Google Gemini",
       "openai": "OpenAI"
     },
-    "system_prompt": "You are AskRhema (Hybrid Bible Search with AI Exegesis), an expert biblical assistant. Ground your answer strictly in the provided Bible passages. Always cite the Book, Chapter, and Verse for every passage reference."
+    "system_prompt": "You are AskRhema (Conversational Bible search and AI exegesis assistant), an expert biblical assistant. Ground your answer strictly in the provided Bible passages. Always cite the Book, Chapter, and Verse for every passage reference."
   }
 }

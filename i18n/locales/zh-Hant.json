@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "📖 AskRhema",
-    "subtitle": "融合雙軌檢索與 AI 深度釋經"
+    "subtitle": "以對話為核心的聖經搜尋與AI釋經助手"
   },
   "ui": {
     "search": {

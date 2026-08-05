@@ -1,7 +1,7 @@
 [project]
 name = "askrhema"
-version = "1.2.5"
-description = "AskRhema - Chat-first Bible search and exegesis assistant"
+version = "1.0.7"
+description = "AskRhema - Conversational Bible search and AI exegesis assistant"
 readme = "README.md"
 requires-python = ">=3.14"
 authors = [

@@ -1,6 +1,6 @@
-# AskRhema - Chat-first Bible Search and Exegesis Assistant
+# AskRhema - Conversational Bible search and AI exegesis assistant
 
-**AskRhema** is a chat-first Bible search and exegesis assistant. It combines hybrid search (BM25 + dense vectors) with large language models to provide grounded, conversational answers to your biblical questions.
+**AskRhema** is a conversational Bible search and AI exegesis assistant. It combines hybrid search (BM25 + dense vectors) with large language models to provide grounded, conversational answers to your biblical questions.
 
 > "Ask and it will be given to you; seek and you will find; knock and the door will be opened to you. For everyone who asks receives; the one who seeks finds; and to the one who knocks, the door will be opened." - Matthew 7:7-8, NIV.
 
@@ -267,6 +267,6 @@ See:
 - BM25 implementation from rank-bm25
 - AI integration with Ollama, Google Gemini, and OpenAI
 
-**Happy Using AskRhema - Chat-first Bible Search and Exegesis Assistant! 📖✨**
+**Happy Using AskRhema - Conversational Bible search and AI exegesis assistant! 📖✨**
 
 ---

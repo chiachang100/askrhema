@@ -1,10 +1,10 @@
 # AskRhema Master Prompt
 
-# MASTER PROMPT: AskRhema — Chat-First Bible Search & Exegesis Assistant
+# MASTER PROMPT: AskRhema — Conversational Bible search and AI exegesis assistant
 
 You are an expert Principal AI Software Engineer.
 
-Your task is to write the complete, production-ready codebase for **AskRhema**, a chat-first Bible search and exegesis assistant built with **Python 3.14+, Streamlit, Qdrant, BM25, Sentence Transformers, Ollama, Google Gemini, and OpenAI**.
+Your task is to write the complete, production-ready codebase for **AskRhema**, a Conversational Bible search and AI exegesis assistant built with **Python 3.14+, Streamlit, Qdrant, BM25, Sentence Transformers, Ollama, Google Gemini, and OpenAI**.
 
 AskRhema should feel like a modern conversational AI application rather than a traditional Bible search interface.
 
@@ -457,7 +457,7 @@ Use proper type hints and comprehensive docstrings.
 
 # 10. FILE: engine/hybrid_search.py
 
-Implement the hybrid Bible retrieval engine.
+Implement the Conversational Bible search and AI exegesis assistant retrieval engine.
 
 Create:
 
@@ -708,7 +708,7 @@ The system should be capable of reformulating or contextualizing a follow-up que
 
 ---
 
-# 16. FILE: app.py — CHAT-FIRST UI
+# 16. FILE: app.py — CONVERSATIONAL UI
 
 The UI is the most important redesign.
 
@@ -1098,7 +1098,7 @@ Provide a complete README containing:
 
 ## Overview
 
-Explain AskRhema as a chat-first Bible research and exegesis assistant.
+Explain AskRhema as a Conversational Bible search and AI exegesis assistant.
 
 ## Requirements
 

@@ -2,7 +2,7 @@
 
 Yes. The current master prompt is very much designed around a search application UI—sidebar controls, provider/model selectors, search depth, filters, AI-mode toggle, passage cards, etc.
 
-We can simplify it into a chat-first Bible assistant while keeping the underlying hybrid search + exegesis architecture.
+We can simplify it into a conversational Bible search and AI exegesis assistant while keeping the underlying hybrid search + exegesis architecture.
 
 I’d recommend this UX:
 

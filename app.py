@@ -1,7 +1,9 @@
-"""AskRhema – Chat-first Bible search and exegesis assistant with i18n."""
+"""AskRhema – Conversational Bible search and AI exegesis assistant with i18n."""
 
 import logging
 import uuid
+from pathlib import Path
+import tomllib
 
 import streamlit as st
 
@@ -17,6 +19,19 @@ from engine.llm_provider import get_available_models
 from i18n.translations import get_available_languages, get_translations
 
 logger = logging.getLogger(__name__)
+
+@st.cache_data
+def get_app_version() -> str:
+    """Return the application version from pyproject.toml."""
+    pyproject_path = Path(__file__).parent / "pyproject.toml"
+
+    with pyproject_path.open("rb") as f:
+        data = tomllib.load(f)
+
+    return str(data["project"]["version"])
+
+
+APP_VERSION = get_app_version()
 
 def get_secret(key: str, default: str = "") -> str:
     """
@@ -55,6 +70,62 @@ st.set_page_config(
     layout="wide",
 )
 
+# --------------------------------------------------------------------------- 
+# # Chat styling 
+# # --------------------------------------------------------------------------- 
+st.markdown( 
+    """ 
+    <style> 
+    /* User message: avatar and content move to the right. */
+    [data-testid="stChatMessage"]:has( 
+        [data-testid="stChatMessageAvatarUser"] 
+    ) { 
+        flex-direction: row-reverse; 
+    } 
+
+    /* User message content area. */
+    [data-testid="stChatMessage"]:has(
+        [data-testid="stChatMessageAvatarUser"]
+    ) [data-testid="stChatMessageContent"] {
+        align-items: flex-end;
+        text-align: right;
+    }
+    
+    /* User bubble: target the actual markdown/content wrapper. */
+    [data-testid="stChatMessage"]:has( 
+        [data-testid="stChatMessageAvatarUser"] 
+    ) [data-testid="stChatMessageContent"] > div { 
+        background: rgba(100, 116, 139, 0.12); 
+        border-radius: 18px 18px 4px 18px; 
+        padding: 0.7rem 1rem; 
+        width: fit-content;
+        max-width: 75%; 
+        margin-left: auto;
+    } 
+
+    /* Make paragraphs inside the user bubble right-aligned. */
+    [data-testid="stChatMessage"]:has(
+        [data-testid="stChatMessageAvatarUser"]
+    ) [data-testid="stChatMessageContent"] p {
+        text-align: right;
+    }
+    
+    /* Assistant messages remain left-aligned. */
+    [data-testid="stChatMessage"]:has( 
+        [data-testid="stChatMessageAvatarAssistant"] 
+    ) [data-testid="stChatMessageContent"] {
+        text-align: left;
+    }
+    
+    /* Remove unnecessary bottom margin from final paragraph. */
+    [data-testid="stChatMessageContent"] p:last-child { 
+        margin-bottom: 0; 
+    } 
+    </style> 
+    """, 
+    unsafe_allow_html=True, 
+)
+
 t = get_translations()
 
 # ---------------------------------------------------------------------------
@@ -78,7 +149,9 @@ if "model" not in st.session_state:
     st.session_state.model = models[0] if models else DEFAULT_LLM_CONFIG.ollama_model
 
 if "api_key" not in st.session_state:
-    st.session_state.api_key = get_api_key_for_provider(st.session_state.provider)
+    st.session_state.api_key = get_api_key_for_provider(
+        st.session_state.provider
+    )
 
 if "temperature" not in st.session_state:
     st.session_state.temperature = DEFAULT_LLM_CONFIG.temperature
@@ -131,7 +204,9 @@ with st.sidebar:
     with st.expander("Language", expanded=False):
         lang_options = get_available_languages()
         lang_codes = list(lang_options.keys())
-        lang_display = [f"{code} - {name}" for code, name in lang_options.items()]
+        lang_display = [
+            f"{code} - {name}" for code, name in lang_options.items()
+        ]
 
         current_index = (
             lang_codes.index(st.session_state.language)
@@ -184,7 +259,11 @@ with st.sidebar:
             st.session_state.model = (
                 models[0]
                 if models
-                else (DEFAULT_LLM_CONFIG.ollama_model if provider == "ollama" else "")
+                else (
+                    DEFAULT_LLM_CONFIG.ollama_model 
+                    if provider == "ollama" 
+                    else ""
+                )
             )
 
             st.session_state.api_key = get_api_key_for_provider(provider)
@@ -330,8 +409,7 @@ with st.sidebar:
 # ---------------------------------------------------------------------------
 
 st.title(t.get("app.title"))
-st.caption(t.get("app.subtitle"))
-
+st.caption(f"{t.get("app.subtitle")} - v{APP_VERSION}")
 
 # ---------------------------------------------------------------------------
 # Display previous chat messages
@@ -387,7 +465,6 @@ if prompt := st.chat_input(
             api_key = st.session_state.api_key.strip()
 
         chat_service = st.session_state.chat_service
-
         system_prompt = get_system_prompt(st.session_state.language)
 
         try:
